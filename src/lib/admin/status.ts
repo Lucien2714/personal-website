@@ -19,10 +19,10 @@ const MESSAGE_KEYS = {
 /** Chip tones matching each status. */
 const TONES = {
   DRAFT: 'neutral',
-  SCHEDULED: 'lavender',
+  SCHEDULED: 'violet',
   PUBLISHED: 'mint',
   ARCHIVED: 'neutral',
-} as const satisfies Record<PublishStatus, 'neutral' | 'lavender' | 'mint'>;
+} as const satisfies Record<PublishStatus, 'neutral' | 'violet' | 'mint'>;
 
 /** The `admin` namespace key that labels a status. */
 export function statusMessageKey(

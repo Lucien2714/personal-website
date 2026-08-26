@@ -58,7 +58,7 @@ export default async function HomePage({
   return (
     <Container size="wide" className="pb-16">
       <section className="flex flex-col items-center gap-6 py-14 text-center sm:py-20">
-        <span className="relative inline-flex h-24 w-24 overflow-hidden rounded-full ring-4 ring-[var(--color-sakura-soft)] sm:h-28 sm:w-28">
+        <span className="relative inline-flex h-24 w-24 overflow-hidden rounded-2xl ring-4 ring-[var(--color-accent-soft)] sm:h-28 sm:w-28">
           <Image
             src={settings.avatarUrl}
             alt={settings.authorName}
@@ -74,9 +74,9 @@ export default async function HomePage({
             {headline}
             <span
               aria-hidden="true"
-              className="ml-2 inline-block animate-float-slow"
+              className="ml-2 inline-block text-[var(--color-accent)]"
             >
-              ✿
+              ▪
             </span>
           </h1>
           <p className="mx-auto max-w-xl text-[var(--color-ink-muted)] sm:text-lg">
@@ -88,11 +88,10 @@ export default async function HomePage({
       <section className="mb-14">
         <SectionHeading
           title={t('latestPosts')}
-          decoration="📖"
           action={
             <Link
               href="/posts"
-              className="text-sm font-medium text-[var(--color-sakura)] transition hover:text-[var(--color-lavender)]"
+              className="text-sm font-medium text-[var(--color-accent)] transition hover:text-[var(--color-violet)]"
             >
               {t('viewAll')} →
             </Link>
@@ -114,11 +113,10 @@ export default async function HomePage({
         <section className="mb-14">
           <SectionHeading
             title={t('latestMoments')}
-            decoration="🌙"
             action={
               <Link
                 href="/moments"
-                className="text-sm font-medium text-[var(--color-sakura)] transition hover:text-[var(--color-lavender)]"
+                className="text-sm font-medium text-[var(--color-accent)] transition hover:text-[var(--color-violet)]"
               >
                 {t('viewAll')} →
               </Link>
@@ -136,11 +134,10 @@ export default async function HomePage({
         <section>
           <SectionHeading
             title={t('featuredProjects')}
-            decoration="🛠"
             action={
               <Link
                 href="/projects"
-                className="text-sm font-medium text-[var(--color-sakura)] transition hover:text-[var(--color-lavender)]"
+                className="text-sm font-medium text-[var(--color-accent)] transition hover:text-[var(--color-violet)]"
               >
                 {t('viewAll')} →
               </Link>

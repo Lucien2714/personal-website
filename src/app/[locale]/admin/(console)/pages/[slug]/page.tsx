@@ -65,7 +65,7 @@ export default async function EditStandalonePage({
         {page.status === 'PUBLISHED' && (
           <Link
             href={`/${page.slug}`}
-            className="text-sm text-[var(--color-sakura)] underline-offset-4 hover:underline"
+            className="text-sm text-[var(--color-accent)] underline-offset-4 hover:underline"
           >
             {t('preview')} ↗
           </Link>

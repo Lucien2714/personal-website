@@ -37,7 +37,7 @@ export default async function ProjectsPage({
 
   return (
     <Container size="wide" className="pb-16">
-      <PageHeader title={t('title')} subtitle={t('subtitle')} decoration="🛠" />
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       {projects.length > 0 ? (
         <div className="grid gap-5 sm:grid-cols-2">

@@ -78,9 +78,9 @@ export function SiteHeader({
         >
           <span
             className={cn(
-              'relative inline-flex h-9 w-9 overflow-hidden rounded-full',
-              'ring-2 ring-[var(--color-sakura-soft)] transition',
-              'group-hover:ring-[var(--color-sakura)]',
+              'relative inline-flex h-9 w-9 overflow-hidden rounded-lg',
+              'ring-2 ring-[var(--color-accent-soft)] transition',
+              'group-hover:ring-[var(--color-accent)]',
             )}
           >
             <Image
@@ -109,7 +109,7 @@ export function SiteHeader({
               className={cn(
                 'link-sweep text-sm font-medium transition',
                 isActive(item.href)
-                  ? 'text-[var(--color-sakura)]'
+                  ? 'text-[var(--color-accent)]'
                   : 'text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]',
               )}
             >
@@ -124,7 +124,7 @@ export function SiteHeader({
           <button
             type="button"
             className={cn(
-              'inline-flex h-9 w-9 items-center justify-center rounded-full md:hidden',
+              'inline-flex h-9 w-9 items-center justify-center rounded-lg md:hidden',
               'border border-[var(--color-border)] bg-[var(--color-surface)]',
               'text-[var(--color-ink-muted)]',
             )}
@@ -151,7 +151,7 @@ export function SiteHeader({
                   className={cn(
                     'block rounded-xl px-3 py-2 text-sm font-medium transition',
                     isActive(item.href)
-                      ? 'bg-[var(--color-sakura-soft)] text-[var(--color-sakura)]'
+                      ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
                       : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-sunken)]',
                   )}
                 >

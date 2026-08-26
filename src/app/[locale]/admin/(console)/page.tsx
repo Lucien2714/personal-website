@@ -93,13 +93,13 @@ export default async function DashboardPage({
         <div className="mb-4 flex flex-wrap gap-3">
           <Link
             href="/admin/posts/new"
-            className="rounded-full bg-[var(--color-sakura)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            className="rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
           >
             + {t('newPost')}
           </Link>
           <Link
             href="/admin/moments"
-            className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold transition hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]"
+            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-semibold transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             + {t('newMoment')}
           </Link>

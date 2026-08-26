@@ -30,7 +30,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-full bg-[var(--color-sakura)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+      className="w-full rounded-lg bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
     >
       {pending ? t('submitting') : t('submit')}
     </button>
@@ -68,7 +68,7 @@ export function LoginForm({
           required
           autoComplete="username"
           autoFocus
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-sakura)]"
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]"
         />
       </div>
 
@@ -85,14 +85,14 @@ export function LoginForm({
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-sakura)]"
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]"
         />
       </div>
 
       {state.errorKey && (
         <p
           role="alert"
-          className="rounded-xl bg-[var(--color-sakura-soft)] px-3.5 py-2.5 text-sm text-[var(--color-danger)]"
+          className="rounded-xl bg-[var(--color-accent-soft)] px-3.5 py-2.5 text-sm text-[var(--color-danger)]"
         >
           {t(state.errorKey)}
         </p>

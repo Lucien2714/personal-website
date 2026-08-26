@@ -44,10 +44,10 @@ export async function Pagination({
   };
 
   const linkClass = cn(
-    'inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium',
+    'inline-flex items-center gap-1.5 rounded-lg border px-4 py-2 text-sm font-medium',
     'border-[var(--color-border)] bg-[var(--color-surface)]',
     'text-[var(--color-ink-muted)] transition',
-    'hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]',
+    'hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]',
   );
 
   return (

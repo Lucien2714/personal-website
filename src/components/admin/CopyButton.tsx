@@ -44,7 +44,7 @@ export function CopyButton({
       type="button"
       onClick={() => void handleClick()}
       className={cn(
-        'rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-medium transition hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]',
+        'rounded-lg border border-[var(--color-border)] px-3 py-1 text-xs font-medium transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]',
         className,
       )}
     >

@@ -53,7 +53,7 @@ export default async function ProjectPage({
     <Container size="wide" className="pb-16 pt-10 sm:pt-14">
       <Link
         href="/projects"
-        className="text-sm text-[var(--color-sakura)] underline-offset-4 hover:underline"
+        className="text-sm text-[var(--color-accent)] underline-offset-4 hover:underline"
       >
         ← {t('title')}
       </Link>
@@ -63,7 +63,7 @@ export default async function ProjectPage({
           <h1 className="font-display text-3xl font-bold sm:text-4xl">
             {project.name}
           </h1>
-          {project.featured && <Chip tone="lavender">{t('featured')}</Chip>}
+          {project.featured && <Chip tone="violet">{t('featured')}</Chip>}
         </div>
 
         <p className="mt-3 max-w-2xl text-[var(--color-ink-muted)]">
@@ -86,7 +86,7 @@ export default async function ProjectPage({
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+              className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
             >
               {t('liveDemo')} ↗
             </a>
@@ -96,7 +96,7 @@ export default async function ProjectPage({
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-[var(--color-border)] px-5 py-2 text-sm font-semibold transition hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]"
+              className="rounded-lg border border-[var(--color-border)] px-5 py-2 text-sm font-semibold transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
             >
               {t('sourceCode')} ↗
             </a>

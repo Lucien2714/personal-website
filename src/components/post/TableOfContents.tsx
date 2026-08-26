@@ -83,7 +83,7 @@ export function TableOfContents({entries}: {entries: TocEntry[]}) {
                 '-ml-px block border-l-2 py-0.5 pl-3 transition',
                 entry.depth === 3 && 'pl-6 text-[0.82rem]',
                 entry.id === activeId
-                  ? 'border-[var(--color-sakura)] font-medium text-[var(--color-sakura)]'
+                  ? 'border-[var(--color-accent)] font-medium text-[var(--color-accent)]'
                   : 'border-transparent text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]',
               )}
             >

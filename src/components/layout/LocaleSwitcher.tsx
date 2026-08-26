@@ -39,7 +39,7 @@ export function LocaleSwitcher({className}: {className?: string}) {
   return (
     <div
       className={cn(
-        'inline-flex items-center rounded-full border',
+        'inline-flex items-center rounded-lg border',
         'border-[var(--color-border)] bg-[var(--color-surface)] p-0.5',
         isPending && 'opacity-60',
         className,
@@ -54,10 +54,10 @@ export function LocaleSwitcher({className}: {className?: string}) {
           onClick={() => switchTo(locale)}
           aria-current={locale === activeLocale ? 'true' : undefined}
           className={cn(
-            'rounded-full px-2.5 py-1 text-xs font-semibold transition',
+            'rounded-md px-2.5 py-1 text-xs font-semibold transition',
             locale === activeLocale
-              ? 'bg-[var(--color-sakura)] text-white'
-              : 'text-[var(--color-ink-muted)] hover:text-[var(--color-sakura)]',
+              ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+              : 'text-[var(--color-ink-muted)] hover:text-[var(--color-accent)]',
           )}
         >
           {localeLabels[locale]}

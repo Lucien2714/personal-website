@@ -93,10 +93,10 @@ export function MarkdownEditor({
           onClick={() => setShowPreview((open) => !open)}
           aria-pressed={showPreview}
           className={cn(
-            'rounded-full px-3 py-1 text-xs font-semibold transition',
+            'rounded-lg px-3 py-1 text-xs font-semibold transition',
             showPreview
-              ? 'bg-[var(--color-sakura)] text-white'
-              : 'text-[var(--color-ink-muted)] hover:text-[var(--color-sakura)]',
+              ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+              : 'text-[var(--color-ink-muted)] hover:text-[var(--color-accent)]',
           )}
         >
           {t('preview')}
@@ -111,7 +111,7 @@ export function MarkdownEditor({
           spellCheck={false}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 font-mono text-[0.85rem] leading-relaxed outline-none transition focus:border-[var(--color-sakura)]"
+          className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 font-mono text-[0.85rem] leading-relaxed outline-none transition focus:border-[var(--color-accent)]"
         />
 
         {showPreview && (

@@ -44,7 +44,7 @@ export async function SiteFooter() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer me"
-              className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-sakura)]"
+              className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-accent)]"
             >
               <span aria-hidden="true" className="mr-1">
                 {SOCIAL_GLYPHS[link.icon] ?? SOCIAL_GLYPHS.link}
@@ -55,7 +55,7 @@ export async function SiteFooter() {
 
           <Link
             href="/feed.xml"
-            className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-sakura)]"
+            className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-accent)]"
           >
             {t('feed')}
           </Link>
@@ -65,7 +65,7 @@ export async function SiteFooter() {
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/api/v1"
-            className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-sakura)]"
+            className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-accent)]"
           >
             {t('api')}
           </a>
@@ -75,7 +75,7 @@ export async function SiteFooter() {
               href={settings.sourceRepoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-sakura)]"
+              className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-accent)]"
             >
               {t('sourceCode')}
             </a>

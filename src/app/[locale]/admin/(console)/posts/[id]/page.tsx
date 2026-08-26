@@ -68,7 +68,7 @@ export default async function EditPostPage({
         {publicSlug && (
           <Link
             href={`/posts/${publicSlug}`}
-            className="text-sm text-[var(--color-sakura)] underline-offset-4 hover:underline"
+            className="text-sm text-[var(--color-accent)] underline-offset-4 hover:underline"
           >
             {t('preview')} ↗
           </Link>

@@ -80,23 +80,23 @@ export default async function PostsPage({
 
   return (
     <Container size="wide" className="pb-16">
-      <PageHeader title={t('title')} subtitle={t('subtitle')} decoration="📖" />
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       {hasFilter && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
           {activeCategory && (
-            <Chip tone="sky">
+            <Chip tone="cyan">
               {t('filteredByCategory', {name: activeCategory.name})}
             </Chip>
           )}
           {activeTag && (
-            <Chip tone="lavender">
+            <Chip tone="violet">
               {t('filteredByTag', {name: activeTag.name})}
             </Chip>
           )}
           <Link
             href="/posts"
-            className="text-sm text-[var(--color-sakura)] underline-offset-4 hover:underline"
+            className="text-sm text-[var(--color-accent)] underline-offset-4 hover:underline"
           >
             {t('clearFilter')}
           </Link>
@@ -139,7 +139,7 @@ export default async function PostsPage({
                     <Link href={`/posts?category=${category.slug}`}>
                       <Chip
                         tone={
-                          category.slug === query.category ? 'sakura' : 'sky'
+                          category.slug === query.category ? 'accent' : 'cyan'
                         }
                       >
                         {category.name}
@@ -162,7 +162,7 @@ export default async function PostsPage({
                   <li key={tag.slug}>
                     <Link href={`/posts?tag=${tag.slug}`}>
                       <Chip
-                        tone={tag.slug === query.tag ? 'sakura' : 'neutral'}
+                        tone={tag.slug === query.tag ? 'accent' : 'neutral'}
                       >
                         #{tag.name}
                         <span className="opacity-60">{tag.count}</span>

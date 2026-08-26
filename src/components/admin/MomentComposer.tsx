@@ -97,7 +97,7 @@ export function MomentComposer() {
         rows={3}
         placeholder={t('newMoment')}
         onChange={(event) => setBody(event.target.value)}
-        className="w-full resize-y rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 text-sm outline-none transition focus:border-[var(--color-sakura)]"
+        className="w-full resize-y rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 text-sm outline-none transition focus:border-[var(--color-accent)]"
       />
 
       {images.length > 0 && (
@@ -138,9 +138,9 @@ export function MomentComposer() {
               aria-pressed={mood === option}
               onClick={() => setMood(mood === option ? '' : option)}
               className={cn(
-                'h-8 w-8 rounded-full text-base transition',
+                'h-8 w-8 rounded-lg text-base transition',
                 mood === option
-                  ? 'bg-[var(--color-sakura-soft)] ring-2 ring-[var(--color-sakura)]'
+                  ? 'bg-[var(--color-accent-soft)] ring-2 ring-[var(--color-accent)]'
                   : 'hover:bg-[var(--color-surface-sunken)]',
               )}
             >
@@ -153,7 +153,7 @@ export function MomentComposer() {
           value={location}
           placeholder="📍"
           onChange={(event) => setLocation(event.target.value)}
-          className="w-28 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs outline-none focus:border-[var(--color-sakura)]"
+          className="w-28 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs outline-none focus:border-[var(--color-accent)]"
         />
 
         <input
@@ -173,7 +173,7 @@ export function MomentComposer() {
           type="button"
           onClick={() => fileInput.current?.click()}
           disabled={isBusy || images.length >= MAX_IMAGES}
-          className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium transition hover:border-[var(--color-sakura)] disabled:opacity-50"
+          className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-medium transition hover:border-[var(--color-accent)] disabled:opacity-50"
         >
           🖼 {t('uploadImage')}
         </button>
@@ -182,7 +182,7 @@ export function MomentComposer() {
           type="button"
           onClick={handleSubmit}
           disabled={isBusy || body.trim().length === 0}
-          className="ml-auto rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+          className="ml-auto rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
         >
           {isBusy ? t('saving') : t('publish')}
         </button>

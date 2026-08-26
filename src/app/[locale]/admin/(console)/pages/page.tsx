@@ -38,7 +38,7 @@ export default async function AdminPagesPage({
         <h2 className="font-display text-xl font-bold">{t('pages')}</h2>
         <Link
           href="/admin/pages/new"
-          className="rounded-full bg-[var(--color-sakura)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          className="rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
         >
           + {t('pages')}
         </Link>
@@ -65,7 +65,7 @@ export default async function AdminPagesPage({
                 </span>
 
                 {page.navOrder !== null && (
-                  <Chip tone="sky">nav {page.navOrder}</Chip>
+                  <Chip tone="cyan">nav {page.navOrder}</Chip>
                 )}
 
                 <code className="font-mono text-xs text-[var(--color-ink-subtle)]">

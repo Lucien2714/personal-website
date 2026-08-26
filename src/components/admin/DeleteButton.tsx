@@ -48,7 +48,7 @@ export function DeleteButton({
       disabled={isPending}
       className={
         className ??
-        'rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50'
+        'rounded-lg border border-[var(--color-border)] px-3 py-1 text-xs font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50'
       }
     >
       {label ?? t('delete')}

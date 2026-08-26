@@ -44,7 +44,7 @@ const STATUSES: PublishStatus[] = ['DRAFT', 'SCHEDULED', 'PUBLISHED'];
 
 /** Shared class list for the plain text inputs. */
 const INPUT_CLASS =
-  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-sakura)]';
+  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]';
 
 /** Renders the editor. */
 export function PostEditor({
@@ -151,7 +151,7 @@ export function PostEditor({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2">
         <div
-          className="flex rounded-full border border-[var(--color-border)] p-0.5"
+          className="flex rounded-lg border border-[var(--color-border)] p-0.5"
           role="tablist"
           aria-label={t('localeTab', {locale: ''})}
         >
@@ -171,10 +171,10 @@ export function PostEditor({
                 aria-selected={activeLocale === tab.locale}
                 onClick={() => setActiveLocale(tab.locale)}
                 className={cn(
-                  'rounded-full px-3.5 py-1.5 text-sm font-medium transition',
+                  'rounded-md px-3.5 py-1.5 text-sm font-medium transition',
                   activeLocale === tab.locale
-                    ? 'bg-[var(--color-sakura)] text-white'
-                    : 'text-[var(--color-ink-muted)] hover:text-[var(--color-sakura)]',
+                    ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+                    : 'text-[var(--color-ink-muted)] hover:text-[var(--color-accent)]',
                 )}
               >
                 {localeLabels[tab.app]}
@@ -199,7 +199,7 @@ export function PostEditor({
               type="button"
               onClick={handleDelete}
               disabled={isSaving}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50"
+              className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50"
             >
               {t('delete')}
             </button>
@@ -208,7 +208,7 @@ export function PostEditor({
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+            className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
           >
             {isSaving ? t('saving') : t('save')}
           </button>
@@ -218,7 +218,7 @@ export function PostEditor({
       {errors.length > 0 && (
         <ul
           role="alert"
-          className="space-y-1 rounded-xl bg-[var(--color-sakura-soft)] px-4 py-3 text-sm text-[var(--color-danger)]"
+          className="space-y-1 rounded-xl bg-[var(--color-accent-soft)] px-4 py-3 text-sm text-[var(--color-danger)]"
         >
           {errors.map((error) => (
             <li key={error}>{error}</li>
@@ -353,7 +353,7 @@ export function PostEditor({
               type="checkbox"
               checked={value.pinned}
               onChange={(event) => updatePost({pinned: event.target.checked})}
-              className="h-4 w-4 accent-[var(--color-sakura)]"
+              className="h-4 w-4 accent-[var(--color-accent)]"
             />
             {t('pinnedField')}
           </label>

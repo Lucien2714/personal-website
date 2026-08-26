@@ -20,7 +20,7 @@ const ICONS = ['github', 'twitter', 'bilibili', 'mail', 'rss', 'link'] as const;
 
 /** Shared class list for the text inputs. */
 const INPUT_CLASS =
-  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-sakura)]';
+  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]';
 
 /** A labelled text field. */
 function Field({
@@ -215,7 +215,7 @@ export function SettingsForm({initial}: {initial: SiteSettings}) {
                     ),
                   })
                 }
-                className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)]"
+                className="rounded-lg border border-[var(--color-border)] px-3 py-1 text-xs transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)]"
               >
                 {t('delete')}
               </button>
@@ -233,7 +233,7 @@ export function SettingsForm({initial}: {initial: SiteSettings}) {
               ],
             })
           }
-          className="rounded-full border border-[var(--color-border)] px-4 py-1.5 text-xs font-medium transition hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]"
+          className="rounded-lg border border-[var(--color-border)] px-4 py-1.5 text-xs font-medium transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
         >
           + Add link
         </button>
@@ -244,7 +244,7 @@ export function SettingsForm({initial}: {initial: SiteSettings}) {
           type="button"
           onClick={handleSave}
           disabled={isSaving}
-          className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
         >
           {isSaving ? t('saving') : t('save')}
         </button>

@@ -34,12 +34,12 @@ export function ProjectCard({project}: {project: ProjectView}) {
           <h3 className="font-display text-lg font-bold">
             <Link
               href={`/projects/${project.slug}`}
-              className="transition hover:text-[var(--color-sakura)]"
+              className="transition hover:text-[var(--color-accent)]"
             >
               {project.name}
             </Link>
           </h3>
-          {project.featured && <Chip tone="lavender">{t('featured')}</Chip>}
+          {project.featured && <Chip tone="violet">{t('featured')}</Chip>}
         </div>
 
         <p className="flex-1 text-sm leading-relaxed text-[var(--color-ink-muted)]">
@@ -63,7 +63,7 @@ export function ProjectCard({project}: {project: ProjectView}) {
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-sakura)]"
+                className="text-[var(--color-ink-muted)] transition hover:text-[var(--color-accent)]"
               >
                 {t('sourceCode')} ↗
               </a>
@@ -73,7 +73,7 @@ export function ProjectCard({project}: {project: ProjectView}) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--color-sakura)] transition hover:text-[var(--color-lavender)]"
+                className="text-[var(--color-accent)] transition hover:text-[var(--color-violet)]"
               >
                 {t('liveDemo')} ↗
               </a>

@@ -66,7 +66,7 @@ export function TokenInput({
         className={cn(
           'flex flex-wrap items-center gap-1.5 rounded-xl border px-2.5 py-2',
           'border-[var(--color-border)] bg-[var(--color-surface)]',
-          'focus-within:border-[var(--color-sakura)]',
+          'focus-within:border-[var(--color-accent)]',
         )}
       >
         {values.map((value) => (

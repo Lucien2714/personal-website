@@ -46,7 +46,7 @@ export function AdminNav() {
                 className={cn(
                   'flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition',
                   active
-                    ? 'bg-[var(--color-sakura-soft)] text-[var(--color-sakura)]'
+                    ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
                     : 'text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-sunken)]',
                 )}
               >

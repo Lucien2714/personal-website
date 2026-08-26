@@ -63,7 +63,7 @@ export function MediaUploader() {
         className={cn(
           'flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition',
           isDragging
-            ? 'border-[var(--color-sakura)] bg-[var(--color-sakura-soft)]'
+            ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)]'
             : 'border-[var(--color-border-strong)] bg-[var(--color-surface)]',
           isUploading && 'opacity-60',
         )}
@@ -91,7 +91,7 @@ export function MediaUploader() {
           type="button"
           onClick={() => fileInput.current?.click()}
           disabled={isUploading}
-          className="rounded-full bg-[var(--color-sakura)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
         >
           {isUploading ? t('saving') : t('uploadImage')}
         </button>

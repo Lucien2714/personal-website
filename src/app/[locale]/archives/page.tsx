@@ -38,7 +38,7 @@ export default async function ArchivesPage({
 
   return (
     <Container className="pb-16">
-      <PageHeader title={t('title')} subtitle={t('subtitle')} decoration="🗂" />
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       {years.length === 0 ? (
         <EmptyState message={t('empty')} />
@@ -61,7 +61,7 @@ export default async function ArchivesPage({
                   >
                     <span
                       aria-hidden="true"
-                      className="absolute -left-[1.6rem] top-3 h-2 w-2 rounded-full bg-[var(--color-sakura)]"
+                      className="absolute -left-[1.6rem] top-3 h-2 w-2 rounded-full bg-[var(--color-accent)]"
                     />
                     <FormattedDate
                       value={post.publishedAt}
@@ -70,7 +70,7 @@ export default async function ArchivesPage({
                     />
                     <Link
                       href={`/posts/${post.slug}`}
-                      className="font-medium transition hover:text-[var(--color-sakura)]"
+                      className="font-medium transition hover:text-[var(--color-accent)]"
                     >
                       {post.title}
                     </Link>

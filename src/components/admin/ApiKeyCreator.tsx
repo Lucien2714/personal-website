@@ -59,8 +59,8 @@ export function ApiKeyCreator() {
   return (
     <div className="card space-y-4 p-5">
       {issuedKey && (
-        <div className="space-y-2 rounded-xl border border-[var(--color-sakura)] bg-[var(--color-sakura-soft)] p-4">
-          <p className="text-sm font-medium text-[var(--color-sakura)]">
+        <div className="space-y-2 rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent-soft)] p-4">
+          <p className="text-sm font-medium text-[var(--color-accent)]">
             ⚠ {t('apiKey.created')}
           </p>
           <div className="flex flex-wrap items-center gap-2">
@@ -71,7 +71,7 @@ export function ApiKeyCreator() {
             <button
               type="button"
               onClick={() => setIssuedKey(null)}
-              className="rounded-full px-3 py-1 text-xs font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+              className="rounded-lg px-3 py-1 text-xs font-medium text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
             >
               {t('cancel')}
             </button>
@@ -92,7 +92,7 @@ export function ApiKeyCreator() {
             value={name}
             placeholder="apex-predictor-bot"
             onChange={(event) => setName(event.target.value)}
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--color-sakura)]"
+            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--color-accent)]"
           />
         </div>
 
@@ -107,7 +107,7 @@ export function ApiKeyCreator() {
             id="key-expiry"
             value={expiresInDays}
             onChange={(event) => setExpiresInDays(event.target.value)}
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--color-sakura)]"
+            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none focus:border-[var(--color-accent)]"
           >
             <option value="0">{t('apiKey.neverExpires')}</option>
             <option value="30">30d</option>
@@ -129,9 +129,9 @@ export function ApiKeyCreator() {
               aria-pressed={scopes.includes(scope)}
               onClick={() => toggleScope(scope)}
               className={cn(
-                'rounded-full px-3 py-1 font-mono text-xs transition',
+                'rounded-lg px-3 py-1 font-mono text-xs transition',
                 scopes.includes(scope)
-                  ? 'bg-[var(--color-sakura)] text-white'
+                  ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
                   : 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]',
               )}
             >
@@ -151,7 +151,7 @@ export function ApiKeyCreator() {
         type="button"
         onClick={handleCreate}
         disabled={isCreating || name.trim().length === 0}
-        className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
       >
         {isCreating ? t('saving') : t('apiKey.create')}
       </button>

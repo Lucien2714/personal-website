@@ -44,7 +44,7 @@ export function PostCard({
 
       <div className={cn(compact ? '' : 'p-5 sm:p-6')}>
         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-[var(--color-ink-subtle)]">
-          {post.pinned && <Chip tone="lavender">{t('pinned')}</Chip>}
+          {post.pinned && <Chip tone="violet">{t('pinned')}</Chip>}
           {post.publishedAt && (
             <FormattedDate value={post.publishedAt} variant="short" />
           )}
@@ -62,7 +62,7 @@ export function PostCard({
             href={`/posts/${post.slug}`}
             // Stretching the link over the card keeps the large click target
             // without nesting interactive elements inside one another.
-            className="after:absolute after:inset-0 after:content-[''] group-hover:text-[var(--color-sakura)]"
+            className="after:absolute after:inset-0 after:content-[''] group-hover:text-[var(--color-accent)]"
           >
             {post.title}
           </Link>
@@ -77,7 +77,7 @@ export function PostCard({
         {!compact && (post.categories.length > 0 || post.tags.length > 0) && (
           <div className="mt-4 flex flex-wrap gap-1.5">
             {post.categories.map((category) => (
-              <Chip key={category.slug} tone="sky">
+              <Chip key={category.slug} tone="cyan">
                 {category.name}
               </Chip>
             ))}

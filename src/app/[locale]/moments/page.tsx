@@ -41,7 +41,7 @@ export default async function MomentsPage({
 
   return (
     <Container className="pb-16">
-      <PageHeader title={t('title')} subtitle={t('subtitle')} decoration="🌙" />
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       {result.items.length > 0 ? (
         <div className="grid gap-4">

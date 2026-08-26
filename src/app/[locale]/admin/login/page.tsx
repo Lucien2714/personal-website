@@ -40,10 +40,11 @@ export default async function LoginPage({
     <Container size="narrow" className="py-24">
       <div className="card mx-auto max-w-sm p-7">
         <div className="mb-6 text-center">
-          <span aria-hidden="true" className="text-3xl">
-            🌸
-          </span>
-          <h1 className="mt-2 font-display text-2xl font-bold">
+          <span
+            aria-hidden="true"
+            className="mx-auto mb-4 block h-0.5 w-8 rounded-full bg-[var(--color-accent)]"
+          />
+          <h1 className="font-display text-2xl font-bold">
             {t('signInTitle')}
           </h1>
           <p className="mt-1 text-sm text-[var(--color-ink-muted)]">

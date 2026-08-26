@@ -33,7 +33,7 @@ const LOCALE_TABS: Array<{locale: Locale; app: AppLocale}> = [
 
 /** Shared class list for the text inputs. */
 const INPUT_CLASS =
-  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-sakura)]';
+  'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-accent)]';
 
 /** Renders the editor. */
 export function PageEditor({
@@ -109,7 +109,7 @@ export function PageEditor({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-full border border-[var(--color-border)] p-0.5">
+        <div className="flex rounded-lg border border-[var(--color-border)] p-0.5">
           {LOCALE_TABS.map((tab) => (
             <button
               key={tab.locale}
@@ -117,10 +117,10 @@ export function PageEditor({
               onClick={() => setActiveLocale(tab.locale)}
               aria-pressed={activeLocale === tab.locale}
               className={cn(
-                'rounded-full px-3.5 py-1.5 text-sm font-medium transition',
+                'rounded-md px-3.5 py-1.5 text-sm font-medium transition',
                 activeLocale === tab.locale
-                  ? 'bg-[var(--color-sakura)] text-white'
-                  : 'text-[var(--color-ink-muted)] hover:text-[var(--color-sakura)]',
+                  ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]'
+                  : 'text-[var(--color-ink-muted)] hover:text-[var(--color-accent)]',
               )}
             >
               {localeLabels[tab.app]}
@@ -139,7 +139,7 @@ export function PageEditor({
               type="button"
               onClick={handleDelete}
               disabled={isSaving}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50"
+              className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)] disabled:opacity-50"
             >
               {t('delete')}
             </button>
@@ -148,7 +148,7 @@ export function PageEditor({
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+            className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90 disabled:opacity-60"
           >
             {isSaving ? t('saving') : t('save')}
           </button>

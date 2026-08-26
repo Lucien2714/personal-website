@@ -48,7 +48,7 @@ export default async function AdminPostsPage({
         <h2 className="font-display text-xl font-bold">{t('posts')}</h2>
         <Link
           href="/admin/posts/new"
-          className="rounded-full bg-[var(--color-sakura)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          className="rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
         >
           + {t('newPost')}
         </Link>
@@ -73,7 +73,7 @@ export default async function AdminPostsPage({
                     {t(statusMessageKey(post.status))}
                   </Chip>
 
-                  {post.pinned && <Chip tone="lavender">📌</Chip>}
+                  {post.pinned && <Chip tone="violet">📌</Chip>}
 
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">
                     {primary?.title ?? '(untitled)'}

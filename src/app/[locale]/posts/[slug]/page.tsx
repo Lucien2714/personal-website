@@ -116,7 +116,7 @@ export default async function PostPage({
                     key={category.slug}
                     href={`/posts?category=${category.slug}`}
                   >
-                    <Chip tone="sky">{category.name}</Chip>
+                    <Chip tone="cyan">{category.name}</Chip>
                   </Link>
                 ))}
                 {post.tags.map((tag) => (
@@ -194,7 +194,7 @@ export default async function PostPage({
 
           <Link
             href="/posts"
-            className="mt-8 inline-block text-sm text-[var(--color-sakura)] underline-offset-4 hover:underline"
+            className="mt-8 inline-block text-sm text-[var(--color-accent)] underline-offset-4 hover:underline"
           >
             ← {t('backToPosts')}
           </Link>

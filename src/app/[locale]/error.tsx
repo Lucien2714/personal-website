@@ -46,7 +46,7 @@ export default function LocaleError({
       <button
         type="button"
         onClick={reset}
-        className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
       >
         {t('retry')}
       </button>

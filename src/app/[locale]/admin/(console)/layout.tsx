@@ -52,7 +52,7 @@ export default async function ConsoleLayout({
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium transition hover:border-[var(--color-sakura)] hover:text-[var(--color-sakura)]"
+            className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             {t('backToSite')}
           </Link>
@@ -61,7 +61,7 @@ export default async function ConsoleLayout({
             <input type="hidden" name="locale" value={locale} />
             <button
               type="submit"
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)]"
+              className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-ink-muted)] transition hover:border-[var(--color-danger)] hover:text-[var(--color-danger)]"
             >
               {tAuth('signOut')}
             </button>

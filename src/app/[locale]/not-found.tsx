@@ -9,8 +9,11 @@ export default function LocaleNotFound() {
 
   return (
     <Container className="flex flex-col items-center gap-6 py-24 text-center">
-      <span aria-hidden="true" className="animate-float-slow text-6xl">
-        🌸
+      <span
+        aria-hidden="true"
+        className="animate-drift font-display text-6xl font-bold text-[var(--color-accent)]"
+      >
+        404
       </span>
 
       <div className="space-y-2">
@@ -22,7 +25,7 @@ export default function LocaleNotFound() {
 
       <Link
         href="/"
-        className="rounded-full bg-[var(--color-sakura)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        className="rounded-lg bg-[var(--color-accent)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
       >
         {t('goHome')}
       </Link>

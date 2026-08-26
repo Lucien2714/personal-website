@@ -35,27 +35,28 @@ export function Container({
   );
 }
 
-/** The title block that opens an index page. */
+/**
+ * The title block that opens an index page.
+ *
+ * The accent rule above the title carries the section's identity, replacing
+ * the emoji each page used to pass in. One typographic device applied
+ * consistently reads as deliberate; a different pictogram per page reads as
+ * decoration.
+ */
 export function PageHeader({
   title,
   subtitle,
-  decoration,
 }: {
   title: string;
   subtitle?: string;
-  /** Optional emoji rendered beside the title. */
-  decoration?: string;
 }) {
   return (
     <div className="mb-8 pt-10 sm:pt-14">
-      <h1 className="font-display text-3xl font-bold sm:text-4xl">
-        {decoration && (
-          <span aria-hidden="true" className="mr-2">
-            {decoration}
-          </span>
-        )}
-        {title}
-      </h1>
+      <span
+        aria-hidden="true"
+        className="mb-4 block h-0.5 w-10 rounded-full bg-[var(--color-accent)]"
+      />
+      <h1 className="font-display text-3xl font-bold sm:text-4xl">{title}</h1>
       {subtitle && (
         <p className="mt-2.5 text-[var(--color-ink-muted)]">{subtitle}</p>
       )}
@@ -74,7 +75,7 @@ export function EmptyState({
   return (
     <div className="card flex flex-col items-center gap-3 px-6 py-14 text-center">
       <span aria-hidden="true" className="text-3xl opacity-70">
-        ✿
+        ◇
       </span>
       <p className="text-[var(--color-ink-muted)]">{message}</p>
       {action}
@@ -85,18 +86,18 @@ export function EmptyState({
 /** A rounded label for a tag, category or status. */
 export function Chip({
   children,
-  tone = 'sakura',
+  tone = 'accent',
   className,
 }: {
   children: ReactNode;
-  tone?: 'sakura' | 'sky' | 'lavender' | 'mint' | 'neutral';
+  tone?: 'accent' | 'cyan' | 'violet' | 'mint' | 'neutral';
   className?: string;
 }) {
   const tones = {
-    sakura: 'bg-[var(--color-sakura-soft)] text-[var(--color-sakura)]',
-    sky: 'bg-[var(--color-sky-soft)] text-[var(--color-sky)]',
-    lavender: 'bg-[var(--color-lavender-soft)] text-[var(--color-lavender)]',
-    mint: 'bg-[var(--color-sky-soft)] text-[var(--color-mint)]',
+    accent: 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]',
+    cyan: 'bg-[var(--color-cyan-soft)] text-[var(--color-cyan)]',
+    violet: 'bg-[var(--color-violet-soft)] text-[var(--color-violet)]',
+    mint: 'bg-[var(--color-cyan-soft)] text-[var(--color-mint)]',
     neutral: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-muted)]',
   } as const;
 
@@ -107,20 +108,17 @@ export function Chip({
 export function SectionHeading({
   title,
   action,
-  decoration,
 }: {
   title: string;
   action?: ReactNode;
-  decoration?: string;
 }) {
   return (
     <div className="mb-5 flex items-end justify-between gap-4">
-      <h2 className="font-display text-xl font-bold sm:text-2xl">
-        {decoration && (
-          <span aria-hidden="true" className="mr-1.5">
-            {decoration}
-          </span>
-        )}
+      <h2 className="flex items-center gap-2.5 font-display text-xl font-bold sm:text-2xl">
+        <span
+          aria-hidden="true"
+          className="h-4 w-0.5 rounded-full bg-[var(--color-accent)]"
+        />
         {title}
       </h2>
       {action}

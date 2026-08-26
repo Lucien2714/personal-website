@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {Inter, Quicksand} from 'next/font/google';
+import {Inter, Space_Grotesk} from 'next/font/google';
 import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
@@ -7,7 +7,7 @@ import type {ReactNode} from 'react';
 
 import '@/styles/globals.css';
 
-import {SakuraBackdrop} from '@/components/decor/SakuraBackdrop';
+import {GridBackdrop} from '@/components/decor/GridBackdrop';
 import {SiteFooter} from '@/components/layout/SiteFooter';
 import {SiteHeader} from '@/components/layout/SiteHeader';
 import {ThemeScript} from '@/components/theme/ThemeScript';
@@ -24,11 +24,17 @@ import {env} from '@/lib/env';
  * segment, and that segment is only known inside `[locale]`.
  */
 
-/** Display face, used for headings and the wordmark. */
-const quicksand = Quicksand({
+/**
+ * Display face, used for headings and the wordmark.
+ *
+ * Space Grotesk is a geometric grotesque with slightly mechanical detailing -
+ * it reads as technical rather than soft, which is the register the rest of
+ * the palette aims for.
+ */
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
-  variable: '--font-quicksand',
+  variable: '--font-space-grotesk',
   display: 'swap',
 });
 
@@ -117,7 +123,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${quicksand.variable} ${inter.variable}`}
+      className={`${spaceGrotesk.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -125,12 +131,12 @@ export default async function LocaleLayout({
       </head>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
-          <SakuraBackdrop />
+          <GridBackdrop />
 
           {/* Keyboard users can jump straight past the navigation. */}
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--color-sakura)] focus:px-4 focus:py-2 focus:text-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-[var(--color-accent)] focus:px-4 focus:py-2 focus:text-[var(--color-on-accent)]"
           >
             Skip to content
           </a>

@@ -40,7 +40,7 @@ export default async function AdminProjectsPage({
         <h2 className="font-display text-xl font-bold">{t('projects')}</h2>
         <Link
           href="/admin/projects/new"
-          className="rounded-full bg-[var(--color-sakura)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+          className="rounded-lg bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:opacity-90"
         >
           + {t('newProject')}
         </Link>
@@ -61,8 +61,8 @@ export default async function AdminProjectsPage({
                 <Chip tone={statusTone(project.status)}>
                   {t(statusMessageKey(project.status))}
                 </Chip>
-                {project.featured && <Chip tone="lavender">★</Chip>}
-                {project.embedUrl && <Chip tone="sky">embed</Chip>}
+                {project.featured && <Chip tone="violet">★</Chip>}
+                {project.embedUrl && <Chip tone="cyan">embed</Chip>}
 
                 <span className="min-w-0 flex-1 truncate text-sm font-medium">
                   {project.translations[0]?.name ?? project.slug}

@@ -16,52 +16,63 @@
 /* ---------------------------------------------------------------------------
  * Design tokens
  *
- * The palette is built around three anime-adjacent accents - sakura pink,
- * clear-sky blue and lavender - over a warm off-white paper. Dark mode moves
- * the same hues onto a deep indigo night sky and lifts their lightness so
- * that contrast ratios stay above 4.5:1 for body text.
+ * The palette is indigo-led, with cyan and violet supporting it, over a cool
+ * near-white ground. It aims for the clean sci-fi register of an anime
+ * interface - electric blues on a neutral surface - rather than a pastel one.
+ *
+ * Dark mode moves the same hues onto a deep navy and lifts their lightness so
+ * that body text stays above a 4.5:1 contrast ratio.
+ *
+ * Token names describe the role, not the hue: `accent` is whatever the primary
+ * happens to be, so changing the palette later does not leave every component
+ * referring to a colour it no longer is.
  * ------------------------------------------------------------------------ */
 
 :root {
   /* Surfaces */
-  --color-canvas: #fff7fb;
+  --color-canvas: #f7f9fc;
   --color-surface: #ffffff;
-  --color-surface-raised: #fffdfe;
-  --color-surface-sunken: #fdeef6;
-  --color-overlay: rgb(43 36 64 / 0.45);
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #eef2f8;
+  --color-overlay: rgb(15 23 42 / 0.5);
 
   /* Text */
-  --color-ink: #2b2440;
-  --color-ink-muted: #6f6785;
-  --color-ink-subtle: #9a93b0;
-  --color-ink-inverse: #fff7fb;
+  --color-ink: #1b2338;
+  --color-ink-muted: #576179;
+  --color-ink-subtle: #8892a6;
+  --color-ink-inverse: #f7f9fc;
 
   /* Accents */
-  --color-sakura: #ff5c9d;
-  --color-sakura-soft: #ffd6e7;
-  --color-sky: #3fa9ff;
-  --color-sky-soft: #d3ecff;
-  --color-lavender: #8b6cf0;
-  --color-lavender-soft: #e4dbff;
-  --color-mint: #2fc4a6;
+  --color-accent: #4f46e5;
+  --color-accent-soft: #e4e7ff;
+  /* Foreground for text and icons sitting *on* the accent colour. It flips
+   * with the theme because the dark accent is light enough that white on it
+   * measures 2.75:1 - well under the 4.5:1 minimum. */
+  --color-on-accent: #ffffff;
+  --color-cyan: #0e8fa8;
+  --color-cyan-soft: #d6f2f8;
+  --color-violet: #7c3aed;
+  --color-violet-soft: #ebe4fe;
+  --color-mint: #0f9d76;
 
   /* Lines */
-  --color-border: #f4dde9;
-  --color-border-strong: #e8c3d8;
+  --color-border: #e3e8f0;
+  --color-border-strong: #c8d1e0;
 
   /* Feedback */
-  --color-danger: #e5484d;
-  --color-warning: #d97706;
-  --color-success: #12a594;
+  --color-danger: #dc2f3a;
+  --color-warning: #b45309;
+  --color-success: #0f9d76;
 
   /* Effects */
   --shadow-soft:
-    0 1px 2px rgb(43 36 64 / 0.04), 0 8px 24px rgb(255 92 157 / 0.08);
+    0 1px 2px rgb(15 23 42 / 0.05), 0 6px 20px rgb(27 35 56 / 0.06);
   --shadow-lifted:
-    0 2px 4px rgb(43 36 64 / 0.06), 0 16px 40px rgb(255 92 157 / 0.14);
-  --shadow-glow: 0 0 0 3px rgb(255 92 157 / 0.18);
+    0 2px 4px rgb(15 23 42 / 0.07), 0 14px 36px rgb(27 35 56 / 0.12);
+  --shadow-glow: 0 0 0 3px rgb(79 70 229 / 0.18);
 
-  --radius-card: 1.25rem;
+  --radius-card: 0.75rem;
+  --radius-chip: 0.4rem;
   --radius-pill: 999px;
 
   color-scheme: light;
@@ -69,70 +80,72 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --color-canvas: #100e1c;
-    --color-surface: #191630;
-    --color-surface-raised: #211d3d;
-    --color-surface-sunken: #141224;
-    --color-overlay: rgb(6 4 16 / 0.65);
+    --color-canvas: #0a0e18;
+    --color-surface: #121828;
+    --color-surface-raised: #182034;
+    --color-surface-sunken: #0e1422;
+    --color-overlay: rgb(3 6 14 / 0.7);
 
-    --color-ink: #ece8fb;
-    --color-ink-muted: #a9a2c8;
-    --color-ink-subtle: #7c749b;
-    --color-ink-inverse: #191630;
+    --color-ink: #e5eaf5;
+    --color-ink-muted: #99a3bb;
+    --color-ink-subtle: #6b768f;
+    --color-ink-inverse: #121828;
 
-    --color-sakura: #ff8fc0;
-    --color-sakura-soft: #4a2340;
-    --color-sky: #7cccff;
-    --color-sky-soft: #17324b;
-    --color-lavender: #b09bff;
-    --color-lavender-soft: #2e2657;
-    --color-mint: #55e0c2;
+    --color-accent: #8b93f8;
+    --color-accent-soft: #232a4d;
+    --color-on-accent: #0a0e18;
+    --color-cyan: #34cfe6;
+    --color-cyan-soft: #0d3441;
+    --color-violet: #a98bfa;
+    --color-violet-soft: #2a2350;
+    --color-mint: #3ad9ac;
 
-    --color-border: #2c2750;
-    --color-border-strong: #3d366b;
+    --color-border: #212a40;
+    --color-border-strong: #32405c;
 
-    --color-danger: #ff6369;
-    --color-warning: #f5a524;
-    --color-success: #3dd8c0;
+    --color-danger: #f4646d;
+    --color-warning: #e3a13a;
+    --color-success: #3ad9ac;
 
-    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
-    --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
-    --shadow-glow: 0 0 0 3px rgb(255 143 192 / 0.25);
+    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 20px rgb(0 0 0 / 0.35);
+    --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.4), 0 14px 36px rgb(0 0 0 / 0.5);
+    --shadow-glow: 0 0 0 3px rgb(139 147 248 / 0.28);
 
     color-scheme: dark;
   }
 }
 
 [data-theme='dark'] {
-  --color-canvas: #100e1c;
-  --color-surface: #191630;
-  --color-surface-raised: #211d3d;
-  --color-surface-sunken: #141224;
-  --color-overlay: rgb(6 4 16 / 0.65);
+  --color-canvas: #0a0e18;
+  --color-surface: #121828;
+  --color-surface-raised: #182034;
+  --color-surface-sunken: #0e1422;
+  --color-overlay: rgb(3 6 14 / 0.7);
 
-  --color-ink: #ece8fb;
-  --color-ink-muted: #a9a2c8;
-  --color-ink-subtle: #7c749b;
-  --color-ink-inverse: #191630;
+  --color-ink: #e5eaf5;
+  --color-ink-muted: #99a3bb;
+  --color-ink-subtle: #6b768f;
+  --color-ink-inverse: #121828;
 
-  --color-sakura: #ff8fc0;
-  --color-sakura-soft: #4a2340;
-  --color-sky: #7cccff;
-  --color-sky-soft: #17324b;
-  --color-lavender: #b09bff;
-  --color-lavender-soft: #2e2657;
-  --color-mint: #55e0c2;
+  --color-accent: #8b93f8;
+  --color-accent-soft: #232a4d;
+  --color-on-accent: #0a0e18;
+  --color-cyan: #34cfe6;
+  --color-cyan-soft: #0d3441;
+  --color-violet: #a98bfa;
+  --color-violet-soft: #2a2350;
+  --color-mint: #3ad9ac;
 
-  --color-border: #2c2750;
-  --color-border-strong: #3d366b;
+  --color-border: #212a40;
+  --color-border-strong: #32405c;
 
-  --color-danger: #ff6369;
-  --color-warning: #f5a524;
-  --color-success: #3dd8c0;
+  --color-danger: #f4646d;
+  --color-warning: #e3a13a;
+  --color-success: #3ad9ac;
 
-  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
-  --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
-  --shadow-glow: 0 0 0 3px rgb(255 143 192 / 0.25);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 20px rgb(0 0 0 / 0.35);
+  --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.4), 0 14px 36px rgb(0 0 0 / 0.5);
+  --shadow-glow: 0 0 0 3px rgb(139 147 248 / 0.28);
 
   color-scheme: dark;
 }
@@ -151,12 +164,13 @@
   --color-ink-subtle: var(--color-ink-subtle);
   --color-ink-inverse: var(--color-ink-inverse);
 
-  --color-sakura: var(--color-sakura);
-  --color-sakura-soft: var(--color-sakura-soft);
-  --color-sky: var(--color-sky);
-  --color-sky-soft: var(--color-sky-soft);
-  --color-lavender: var(--color-lavender);
-  --color-lavender-soft: var(--color-lavender-soft);
+  --color-accent: var(--color-accent);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-on-accent: var(--color-on-accent);
+  --color-cyan: var(--color-cyan);
+  --color-cyan-soft: var(--color-cyan-soft);
+  --color-violet: var(--color-violet);
+  --color-violet-soft: var(--color-violet-soft);
   --color-mint: var(--color-mint);
 
   --color-border: var(--color-border);
@@ -167,15 +181,14 @@
   --color-success: var(--color-success);
 
   --font-display:
-    var(--font-quicksand), ui-rounded, 'Hiragino Maru Gothic ProN', 'Segoe UI',
-    system-ui, sans-serif;
+    var(--font-space-grotesk), 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-sans:
     var(--font-inter), system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
     'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
   --font-mono:
     'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --radius-card: 1.25rem;
+  --radius-card: 0.75rem;
   --shadow-soft: var(--shadow-soft);
   --shadow-lifted: var(--shadow-lifted);
 }
@@ -208,18 +221,18 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.015em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-sakura);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-    border-radius: 0.375rem;
+    border-radius: 0.25rem;
   }
 
   ::selection {
-    background-color: var(--color-sakura-soft);
+    background-color: var(--color-accent-soft);
     color: var(--color-ink);
   }
 
@@ -241,36 +254,38 @@
  * ------------------------------------------------------------------------ */
 
 @layer components {
-  /* The soft card that most content sits on. */
+  /* The card that most content sits on. */
   .card {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-soft);
     transition:
-      transform 200ms ease,
-      box-shadow 200ms ease,
-      border-color 200ms ease;
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
   }
 
   .card-interactive:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-lifted);
     border-color: var(--color-border-strong);
   }
 
-  /* Small rounded label used for tags, categories and statuses. */
+  /* Small label used for tags, categories and statuses. A modest corner
+   * radius rather than a pill keeps it reading as metadata. */
   .chip {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    padding: 0.15rem 0.7rem;
-    border-radius: var(--radius-pill);
-    font-size: 0.78rem;
-    font-weight: 600;
+    padding: 0.1rem 0.55rem;
+    border-radius: var(--radius-chip);
+    font-size: 0.75rem;
+    font-weight: 500;
     line-height: 1.6;
-    background-color: var(--color-sakura-soft);
-    color: var(--color-sakura);
+    letter-spacing: 0.01em;
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent);
     border: 1px solid transparent;
     transition:
       background-color 160ms ease,
@@ -281,19 +296,19 @@
   .aurora {
     background-image:
       radial-gradient(
-        60rem 30rem at 10% -10%,
-        rgb(255 92 157 / 0.16),
+        62rem 30rem at 12% -8%,
+        rgb(79 70 229 / 0.13),
+        transparent 62%
+      ),
+      radial-gradient(
+        50rem 26rem at 88% 2%,
+        rgb(14 143 168 / 0.12),
         transparent 60%
       ),
       radial-gradient(
-        50rem 26rem at 90% 0%,
-        rgb(63 169 255 / 0.14),
-        transparent 60%
-      ),
-      radial-gradient(
-        40rem 24rem at 50% 20%,
-        rgb(139 108 240 / 0.12),
-        transparent 65%
+        44rem 24rem at 52% 24%,
+        rgb(124 58 237 / 0.08),
+        transparent 66%
       );
   }
 
@@ -306,17 +321,13 @@
     content: '';
     position: absolute;
     inset-inline: 0;
-    bottom: -0.2rem;
+    bottom: -0.25rem;
     height: 2px;
-    border-radius: 2px;
-    background: linear-gradient(
-      90deg,
-      var(--color-sakura),
-      var(--color-lavender)
-    );
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-cyan));
     transform: scaleX(0);
     transform-origin: right;
-    transition: transform 220ms ease;
+    transition: transform 200ms ease;
   }
 
   .link-sweep:hover::after,
@@ -337,7 +348,7 @@
 .prose-anime {
   color: var(--color-ink);
   font-size: 1.02rem;
-  line-height: 1.85;
+  line-height: 1.8;
   word-wrap: break-word;
 }
 
@@ -354,17 +365,17 @@
 }
 
 .prose-anime h2 {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   padding-bottom: 0.35rem;
-  border-bottom: 2px dashed var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .prose-anime h3 {
-  font-size: 1.28rem;
+  font-size: 1.25rem;
 }
 
 .prose-anime h4 {
-  font-size: 1.1rem;
+  font-size: 1.08rem;
 }
 
 /* rehype-autolink-headings wraps the heading text in an anchor; keep it
@@ -375,19 +386,19 @@
 }
 
 .prose-anime .heading-anchor:hover {
-  color: var(--color-sakura);
+  color: var(--color-accent);
 }
 
 .prose-anime a:not(.heading-anchor) {
-  color: var(--color-sakura);
+  color: var(--color-accent);
   text-decoration: underline;
-  text-decoration-thickness: 1.5px;
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   transition: color 160ms ease;
 }
 
 .prose-anime a:not(.heading-anchor):hover {
-  color: var(--color-lavender);
+  color: var(--color-cyan);
 }
 
 .prose-anime ul,
@@ -408,14 +419,14 @@
 }
 
 .prose-anime li::marker {
-  color: var(--color-sakura);
+  color: var(--color-accent);
 }
 
 .prose-anime blockquote {
   margin-inline: 0;
-  padding: 0.9rem 1.2rem;
-  border-inline-start: 4px solid var(--color-lavender);
-  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 0.85rem 1.15rem;
+  border-inline-start: 3px solid var(--color-accent);
+  border-radius: 0 0.5rem 0.5rem 0;
   background-color: var(--color-surface-sunken);
   color: var(--color-ink-muted);
 }
@@ -425,7 +436,7 @@
 }
 
 .prose-anime img {
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   box-shadow: var(--shadow-soft);
   max-width: 100%;
   height: auto;
@@ -433,7 +444,7 @@
 
 .prose-anime hr {
   border: none;
-  height: 2px;
+  height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
@@ -446,18 +457,19 @@
 .prose-anime :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  padding: 0.15em 0.4em;
-  border-radius: 0.4rem;
-  background-color: var(--color-sakura-soft);
-  color: var(--color-sakura);
+  padding: 0.12em 0.36em;
+  border-radius: 0.25rem;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-accent);
+  border: 1px solid var(--color-border);
 }
 
 .prose-anime pre {
-  padding: 1.1rem 1.2rem;
-  border-radius: 0.9rem;
+  padding: 1.05rem 1.15rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--color-border);
   overflow-x: auto;
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   line-height: 1.65;
   tab-size: 2;
 }
@@ -504,7 +516,7 @@ html[data-theme='dark'] .shiki span {
 .prose-anime .footnotes {
   margin-top: 3rem;
   padding-top: 1rem;
-  border-top: 2px dashed var(--color-border);
+  border-top: 1px solid var(--color-border);
   font-size: 0.92rem;
   color: var(--color-ink-muted);
 }
@@ -516,34 +528,34 @@ html[data-theme='dark'] .shiki span {
  * page whose job is to be read.
  * ------------------------------------------------------------------------ */
 
-@keyframes float-slow {
+@keyframes drift {
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-14px) rotate(3deg);
+    transform: translateY(-12px) rotate(8deg);
   }
 }
 
-@keyframes twinkle {
+@keyframes pulse-dim {
   0%,
   100% {
-    opacity: 0.25;
-    transform: scale(0.9);
+    opacity: 0.2;
+    transform: scale(0.85);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.1);
+    opacity: 0.7;
+    transform: scale(1.05);
   }
 }
 
-.animate-float-slow {
-  animation: float-slow 9s ease-in-out infinite;
+.animate-drift {
+  animation: drift 11s ease-in-out infinite;
 }
 
-.animate-twinkle {
-  animation: twinkle 3.5s ease-in-out infinite;
+.animate-pulse-dim {
+  animation: pulse-dim 4.5s ease-in-out infinite;
 }
 
 /* A thin scrollbar that matches the palette instead of the OS default. */
@@ -564,6 +576,6 @@ html[data-theme='dark'] .shiki span {
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-sakura);
+    background-color: var(--color-accent);
   }
 }
