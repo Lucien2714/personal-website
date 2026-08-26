@@ -5,6 +5,7 @@ import {MomentCard} from '@/components/moment/MomentCard';
 import {Pagination} from '@/components/ui/Pagination';
 import {Container, EmptyState, PageHeader} from '@/components/ui/primitives';
 import type {AppLocale} from '@/i18n/routing';
+import {countCommentsByTarget} from '@/lib/content/comments';
 import {listMoments} from '@/lib/content/moments';
 
 /** The moments stream: short, dated notes in reverse chronological order. */
@@ -39,6 +40,12 @@ export default async function MomentsPage({
     listMoments({page}),
   ]);
 
+  // One grouped query for the whole page rather than a count per card.
+  const commentCounts = await countCommentsByTarget(
+    'moment',
+    result.items.map((moment) => moment.id),
+  );
+
   return (
     <Container className="pb-16">
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
@@ -46,7 +53,11 @@ export default async function MomentsPage({
       {result.items.length > 0 ? (
         <div className="grid gap-4">
           {result.items.map((moment) => (
-            <MomentCard key={moment.id} moment={moment} />
+            <MomentCard
+              key={moment.id}
+              moment={moment}
+              commentCount={commentCounts.get(moment.id) ?? 0}
+            />
           ))}
         </div>
       ) : (

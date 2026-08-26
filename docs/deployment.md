@@ -37,6 +37,8 @@ Edit `.env`. The values that must change:
 | `NEXT_PUBLIC_SITE_URL` | `https://` + that domain, no trailing slash |
 | `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` | your first admin account |
 | `API_CORS_ORIGINS` | `*` for public reads, or a comma-separated allow-list |
+| `OAUTH_GITHUB_CLIENT_ID` / `_SECRET` | Optional; enables GitHub sign-in for readers |
+| `OAUTH_GITEE_CLIENT_ID` / `_SECRET` | Optional; enables Gitee sign-in |
 
 `DATABASE_URL` is rewritten by the compose file from the `POSTGRES_*` values,
 so it does not need to be correct in `.env` for the Docker deployment.
@@ -63,6 +65,30 @@ docker compose ps
 curl -s https://your-domain/api/v1 | head
 ```
 
+### Reader sign-in
+
+Comments require a reader to sign in, which requires at least one OAuth
+provider. Both are optional and independent - with neither configured the
+site runs fine and the sign-in page says none is available.
+
+Register the callback URL as `https://your-domain/api/auth/<slug>/callback`:
+
+| Provider | Where | Slug |
+| --- | --- | --- |
+| GitHub | <https://github.com/settings/developers> | `github` |
+| Gitee | <https://gitee.com/oauth/applications> | `gitee` |
+
+WeChat and QQ are not available to a personal site; see
+[auth.md](auth.md#configured-providers) for why, and for what adding another
+provider involves.
+
+Changing these variables needs a restart of the app container, because the
+provider list is read at start-up:
+
+```bash
+docker compose up -d --force-recreate app
+```
+
 ## Migrating the old blog
 
 Run the importer inside the container with the Jekyll checkout mounted:
@@ -70,8 +96,14 @@ Run the importer inside the container with the Jekyll checkout mounted:
 ```bash
 docker compose run --rm \
   -v /path/to/blog:/blog:ro \
-  app npx tsx scripts/import-jekyll.ts --source /blog
+  -v personal-website_uploads:/app/public/uploads \
+  migrate npx tsx scripts/import-jekyll.ts --source /blog
 ```
+
+It runs in the `migrate` service, not `app`, for the reason given at the top of
+this file: the runtime image has no source tree and no `tsx`. The uploads volume
+is mounted so that images copied out of the Jekyll tree land where the app will
+serve them from.
 
 Add `--dry-run` first to see what it would do. The importer is idempotent —
 posts are matched on the slug the old site used — so re-running it updates

@@ -15,7 +15,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "switchLanguage": "Language",
-    "toggleTheme": "Toggle theme"
+    "toggleTheme": "Toggle theme",
+    "signIn": "Sign in"
   },
   "home": {
     "greeting": "Welcome aboard",
@@ -163,7 +164,9 @@
       "projects": "Projects",
       "drafts": "Drafts",
       "media": "Media files",
-      "views": "Total views"
+      "views": "Total views",
+      "comments": "Comments",
+      "pendingComments": "Pending"
     },
     "apiKey": {
       "name": "Key name",
@@ -180,7 +183,23 @@
       "expired": "Expired",
       "lastUsedLabel": "Last used"
     },
-    "empty": "Nothing here yet."
+    "empty": "Nothing here yet.",
+    "comments": {
+      "approve": "Approve",
+      "markSpam": "Spam",
+      "block": "Block",
+      "unblock": "Unblock",
+      "confirmBlock": "Block this person and hide their existing comments?",
+      "blocked": "Blocked",
+      "filterAll": "All",
+      "filterPending": "Pending",
+      "filterPublished": "Published",
+      "filterSpam": "Spam",
+      "filterDeleted": "Deleted",
+      "onPost": "on {title}",
+      "deletedNote": "deleted",
+      "title": "Comments"
+    }
   },
   "common": {
     "loading": "Loading…",
@@ -188,5 +207,57 @@
     "readMore": "Read more",
     "optional": "optional",
     "required": "required"
+  },
+  "comments": {
+    "title": "Comments",
+    "count": "{count, plural, =0 {No comments yet} one {# comment} other {# comments}}",
+    "empty": "No comments yet. Be the first.",
+    "placeholder": "Share a thought. Markdown is supported.",
+    "submit": "Post comment",
+    "submitting": "Posting…",
+    "preview": "Preview",
+    "write": "Write",
+    "posted": "Posted.",
+    "pending": "Thanks — your comment is awaiting review.",
+    "reply": "Reply",
+    "replyingTo": "Replying to {name}",
+    "cancelReply": "Cancel",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Delete this comment?",
+    "edited": "edited",
+    "author": "Author",
+    "closed": "Comments are closed on this page.",
+    "signInPrompt": "Sign in to join the conversation.",
+    "remaining": "{count} characters left",
+    "markdownHint": "Bold, italics, links, lists, quotes and code are supported. Images and headings are not.",
+    "error": {
+      "signInRequired": "Sign in to comment.",
+      "empty": "Write something first.",
+      "tooLong": "That comment is too long.",
+      "closed": "Comments are closed here.",
+      "tooQuick": "You are commenting too quickly. Wait a moment.",
+      "parentMissing": "The comment you replied to is no longer available.",
+      "notEditable": "That comment can no longer be edited.",
+      "saveFailed": "The comment could not be saved. Try again."
+    }
+  },
+  "signin": {
+    "title": "Sign in",
+    "subtitle": "Sign in to comment. Nothing is posted on your behalf, and your email address is never shown.",
+    "continueWith": "Continue with {provider}",
+    "noProviders": "No sign-in provider is configured on this site yet.",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {name}",
+    "account": "Account",
+    "error": {
+      "cancelled": "Sign-in was cancelled.",
+      "invalid_state": "That sign-in link expired. Please try again.",
+      "missing_code": "The provider did not return an authorisation code.",
+      "unknown_provider": "That sign-in provider is not available.",
+      "provider_error": "The provider could not be reached. Please try again."
+    }
   }
 }

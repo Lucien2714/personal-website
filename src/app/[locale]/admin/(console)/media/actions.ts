@@ -2,7 +2,7 @@
 
 import {revalidatePath} from 'next/cache';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {deleteMedia} from '@/lib/media/storage';
 
 /** Server actions behind the media library. */
@@ -18,7 +18,7 @@ import {deleteMedia} from '@/lib/media/storage';
  * @param id Identifier of the media row.
  */
 export async function deleteMediaAction(id: string): Promise<{ok: boolean}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   try {
     await deleteMedia(id);

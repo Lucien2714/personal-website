@@ -76,24 +76,61 @@ missing translation is therefore a smaller problem than a 404.
 
 ## Authentication
 
-Two layers, doing different jobs:
+Two populations share one session mechanism: **staff**, who run the site, and
+**readers**, who signed in to comment. [auth.md](auth.md) covers the boundary
+in full; the shape of it is two layers doing different jobs:
 
 - `src/proxy.ts` runs at the edge and checks only that a session **cookie
   exists**. It cannot verify the token, because the Edge runtime has no
   database. It is an optimisation — it saves rendering a page that is about to
   redirect — and is never the only check.
 - `src/lib/auth/guard.ts` runs on the server, verifies the JWT, looks the
-  session up, and confirms it is neither revoked nor expired. This is the real
-  gate, and every admin page and server action calls it.
+  session up, confirms it is neither revoked nor expired, **and checks the
+  role**. This is the real gate, and every console page and server action calls
+  it. A single list, `STAFF_ROLES`, decides who counts as staff.
 
-Server actions call `requireUserForAction()` **individually**, not by relying
-on the layout. A server action is a public HTTP endpoint in its own right;
-anyone who learns its identifier can invoke it directly, and the layout's check
-never runs.
+Console server actions call `requireStaffForAction()` **individually**, not by
+relying on the layout. A server action is a public HTTP endpoint in its own
+right; anyone who learns its identifier can invoke it directly, and the
+layout's check never runs. Comment actions call `requireReaderForAction()`,
+which admits any signed-in, unblocked account.
 
 Sessions are JWTs (stateless, cheap to verify) paired with a row in `sessions`
 (revocable). Only a hash of the token id is stored, so a database dump yields
 nothing replayable.
+
+## Comments
+
+Readers sign in through OAuth and comment; see [auth.md](auth.md) for the
+identity side. The parts worth knowing here:
+
+- **A separate, much narrower Markdown pipeline.**
+  `src/lib/content/comment-markdown.ts` permits inline emphasis, links,
+  code, quotes and lists, and strips headings, images, tables and raw HTML.
+  A comment that can render an `<h2>` competes with the article above it,
+  and an image in a comment is the standard tracking-pixel vector. Links get
+  `rel="nofollow ugc"`, which removes the incentive to comment for ranking.
+
+- **One target model, three columns.** A comment points at a post, a moment
+  or a project through three nullable foreign keys rather than a
+  `targetType`/`targetId` pair. That costs a little discipline - exactly one
+  must be set, enforced in `src/lib/content/comments.ts` - and buys real
+  referential integrity: deleting a post takes its comments with it, which a
+  polymorphic pair cannot express.
+
+- **Threads are two levels deep.** A reply to a reply attaches to the same
+  parent. Arbitrary nesting is unreadable on a phone, and the indentation
+  budget runs out long before the conversation does.
+
+- **Nothing is hard-deleted.** A hidden comment stays in the table so the
+  decision is reversible and so its author is not told which of their
+  comments vanished. A reply whose parent is hidden is promoted to the top
+  level rather than disappearing with it: the answer may stand on its own.
+
+- **Moderation is a setting, not a constant.** `commentModeration` is
+  `none` by default - sign-in is required either way, so a spammer needs a
+  real GitHub or Gitee account per identity - and can be tightened to
+  `first-post` or `all` from the console without a deploy or a migration.
 
 ## The public API
 
@@ -150,6 +187,9 @@ Each of these exists in exactly one place, and that is the point:
 | How content is written | `src/lib/content/authoring.ts` |
 | Locale ↔ enum conversion | `src/i18n/routing.ts` |
 | Environment validation | `src/lib/env.ts` |
+| Who counts as staff | `src/lib/auth/guard.ts` |
+| What a comment may contain | `src/lib/content/comment-markdown.ts` |
+| Which comments are visible | `src/lib/content/comments.ts` |
 | API request handling | `src/lib/api/handler.ts` |
 
 `authoring.ts` in particular is shared by the console, the API and the Jekyll

@@ -15,7 +15,8 @@
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单",
     "switchLanguage": "语言",
-    "toggleTheme": "切换主题"
+    "toggleTheme": "切换主题",
+    "signIn": "登录"
   },
   "home": {
     "greeting": "欢迎来到这里",
@@ -163,7 +164,9 @@
       "projects": "项目",
       "drafts": "草稿",
       "media": "媒体文件",
-      "views": "总阅读量"
+      "views": "总阅读量",
+      "comments": "评论",
+      "pendingComments": "待审评论"
     },
     "apiKey": {
       "name": "密钥名称",
@@ -180,7 +183,23 @@
       "expired": "已过期",
       "lastUsedLabel": "最近使用"
     },
-    "empty": "这里还什么都没有。"
+    "empty": "这里还什么都没有。",
+    "comments": {
+      "approve": "通过",
+      "markSpam": "标为垃圾",
+      "block": "拉黑",
+      "unblock": "解除拉黑",
+      "confirmBlock": "拉黑此人并隐藏其已有评论？",
+      "blocked": "已拉黑",
+      "filterAll": "全部",
+      "filterPending": "待审核",
+      "filterPublished": "已发布",
+      "filterSpam": "垃圾",
+      "filterDeleted": "已删除",
+      "onPost": "于《{title}》",
+      "deletedNote": "已删除",
+      "title": "评论"
+    }
   },
   "common": {
     "loading": "加载中…",
@@ -188,5 +207,57 @@
     "readMore": "阅读全文",
     "optional": "可选",
     "required": "必填"
+  },
+  "comments": {
+    "title": "评论",
+    "count": "{count, plural, =0 {还没有评论} other {# 条评论}}",
+    "empty": "还没有评论，来说第一句吧。",
+    "placeholder": "说点什么，支持 Markdown。",
+    "submit": "发表评论",
+    "submitting": "发表中…",
+    "preview": "预览",
+    "write": "编写",
+    "posted": "已发表。",
+    "pending": "谢谢，你的评论正在等待审核。",
+    "reply": "回复",
+    "replyingTo": "回复 {name}",
+    "cancelReply": "取消",
+    "edit": "编辑",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "confirmDelete": "确定删除这条评论吗？",
+    "edited": "已编辑",
+    "author": "作者",
+    "closed": "本页评论已关闭。",
+    "signInPrompt": "登录后即可参与讨论。",
+    "remaining": "还可输入 {count} 字",
+    "markdownHint": "支持粗体、斜体、链接、列表、引用和代码，不支持图片和标题。",
+    "error": {
+      "signInRequired": "请先登录再评论。",
+      "empty": "请先写点内容。",
+      "tooLong": "评论太长了。",
+      "closed": "这里的评论已关闭。",
+      "tooQuick": "发表得太频繁了，稍等一下。",
+      "parentMissing": "你回复的那条评论已不存在。",
+      "notEditable": "这条评论已无法编辑。",
+      "saveFailed": "评论未能保存，请重试。"
+    }
+  },
+  "signin": {
+    "title": "登录",
+    "subtitle": "登录后即可评论。我们不会以你的名义发布任何内容，邮箱也不会公开。",
+    "continueWith": "使用 {provider} 登录",
+    "noProviders": "本站尚未配置任何登录方式。",
+    "signOut": "退出登录",
+    "signedInAs": "已登录：{name}",
+    "account": "账号",
+    "error": {
+      "cancelled": "已取消登录。",
+      "invalid_state": "登录链接已失效，请重试。",
+      "missing_code": "登录服务未返回授权码。",
+      "unknown_provider": "该登录方式不可用。",
+      "provider_error": "无法连接登录服务，请重试。"
+    }
   }
 }

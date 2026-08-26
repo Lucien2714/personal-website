@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import {FormattedDate} from '@/components/ui/FormattedDate';
+import {Link} from '@/i18n/navigation';
 import type {MomentView} from '@/lib/content/moments';
 import {cn} from '@/lib/utils/cn';
 
@@ -12,7 +13,18 @@ import {cn} from '@/lib/utils/cn';
  * pipeline. That keeps a quick note quick to publish and impossible to break
  * with a stray character.
  */
-export function MomentCard({moment}: {moment: MomentView}) {
+export function MomentCard({
+  moment,
+  commentCount,
+}: {
+  moment: MomentView;
+  /**
+   * When given, the timestamp becomes a link to the moment's own page and
+   * the count is shown beside it. Omitted on that page itself, where
+   * linking to where you already are would be noise.
+   */
+  commentCount?: number;
+}) {
   const imageCount = moment.images.length;
 
   return (
@@ -27,11 +39,32 @@ export function MomentCard({moment}: {moment: MomentView}) {
             {moment.mood}
           </span>
         )}
-        <FormattedDate value={moment.createdAt} variant="short" />
+        {commentCount === undefined ? (
+          <FormattedDate value={moment.createdAt} variant="short" />
+        ) : (
+          <Link
+            href={`/moments/${moment.id}`}
+            className="transition hover:text-[var(--color-accent)]"
+          >
+            <FormattedDate value={moment.createdAt} variant="short" />
+          </Link>
+        )}
         {moment.location && (
           <>
             <span aria-hidden="true">·</span>
             <span>📍 {moment.location}</span>
+          </>
+        )}
+
+        {commentCount !== undefined && commentCount > 0 && (
+          <>
+            <span aria-hidden="true">·</span>
+            <Link
+              href={`/moments/${moment.id}#comments`}
+              className="transition hover:text-[var(--color-accent)]"
+            >
+              💬 {commentCount}
+            </Link>
           </>
         )}
       </header>

@@ -9,6 +9,7 @@ import type {ReactNode} from 'react';
 import '@/styles/globals.css';
 
 import {GridBackdrop} from '@/components/decor/GridBackdrop';
+import {AccountMenu} from '@/components/layout/AccountMenu';
 import {SiteFooter} from '@/components/layout/SiteFooter';
 import {SiteHeader} from '@/components/layout/SiteHeader';
 import {type AppLocale, routing, toPrismaLocale} from '@/i18n/routing';
@@ -153,6 +154,13 @@ export default async function LocaleLayout({
               href: `/${page.slug}`,
               label: page.title,
             }))}
+            accountSlot={
+              // A layout cannot know which page is being rendered, so the
+              // header sign-in returns to the locale root. The prompt that
+              // matters - the one under a comment thread - is rendered by the
+              // page itself and returns to that exact article.
+              <AccountMenu locale={locale} returnTo={`/${locale}`} />
+            }
           />
 
           <main id="main" className="flex-1">

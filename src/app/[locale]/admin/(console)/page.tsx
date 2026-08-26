@@ -18,13 +18,24 @@ export const dynamic = 'force-dynamic';
 
 /** Collects the dashboard counters in a single round trip. */
 async function loadStats() {
-  const [posts, drafts, moments, projects, media, views] = await Promise.all([
+  const [
+    posts,
+    drafts,
+    moments,
+    projects,
+    media,
+    views,
+    comments,
+    pendingComments,
+  ] = await Promise.all([
     db.post.count({where: {deletedAt: null, status: 'PUBLISHED'}}),
     db.post.count({where: {deletedAt: null, status: 'DRAFT'}}),
     db.moment.count({where: {deletedAt: null}}),
     db.project.count(),
     db.media.count(),
     db.post.aggregate({_sum: {viewCount: true}}),
+    db.comment.count({where: {deletedAt: null, status: 'PUBLISHED'}}),
+    db.comment.count({where: {deletedAt: null, status: 'PENDING'}}),
   ]);
 
   return {
@@ -34,6 +45,8 @@ async function loadStats() {
     projects,
     media,
     views: views._sum.viewCount ?? 0,
+    comments,
+    pendingComments,
   };
 }
 
@@ -69,10 +82,26 @@ export default async function DashboardPage({
     {label: t('stats.projects'), value: stats.projects, icon: '🛠'},
     {label: t('stats.media'), value: stats.media, icon: '🖼'},
     {label: t('stats.views'), value: stats.views, icon: '👀'},
+    {label: t('stats.comments'), value: stats.comments, icon: '💬'},
   ];
 
   return (
     <div className="space-y-8">
+      {/* Only shown when there is something to do. With moderation off
+          this never appears, which is the point: a tile reading "Pending 0"
+          forever is noise. */}
+      {stats.pendingComments > 0 && (
+        <Link
+          href="/admin/comments?status=pending"
+          className="card flex items-center gap-3 p-4 transition hover:border-[var(--color-accent)]"
+        >
+          <span aria-hidden="true">💬</span>
+          <span className="text-sm font-medium">
+            {t('stats.pendingComments')}: {stats.pendingComments}
+          </span>
+        </Link>
+      )}
+
       <section>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {tiles.map((tile) => (

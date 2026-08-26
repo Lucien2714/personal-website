@@ -126,4 +126,29 @@ export async function listRecentMoments(limit = 4): Promise<MomentView[]> {
   return rows.map(toMomentView);
 }
 
+/**
+ * Loads one published moment.
+ *
+ * Moments have their own page purely so a conversation has somewhere to
+ * live: threading a comment box into a scrolling list would put several
+ * open composers on one screen.
+ *
+ * @param id Identifier of the moment.
+ */
+export async function getMomentById(id: string): Promise<MomentView | null> {
+  const row = await db.moment.findFirst({
+    where: {...publicMomentFilter(), id},
+    select: {
+      id: true,
+      body: true,
+      images: true,
+      mood: true,
+      location: true,
+      createdAt: true,
+    },
+  });
+
+  return row ? toMomentView(row) : null;
+}
+
 export {publicMomentFilter};

@@ -32,6 +32,8 @@ export interface SessionUser {
   displayName: string;
   role: UserRole;
   avatarUrl: string | null;
+  /** Set when the owner has blocked this account from commenting. */
+  blockedAt: Date | null;
 }
 
 /** Hashes a token identifier for storage. */
@@ -153,6 +155,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
           displayName: true,
           role: true,
           avatarUrl: true,
+          blockedAt: true,
         },
       },
     },

@@ -4,7 +4,7 @@ import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 
 import {API_SCOPES, createApiKey} from '@/lib/api/keys';
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {db} from '@/lib/db';
 
 /** Server actions behind the API-key screen. */
@@ -33,7 +33,7 @@ export type CreateKeyResult =
 export async function createApiKeyAction(
   input: unknown,
 ): Promise<CreateKeyResult> {
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   const parsed = createKeySchema.safeParse(input);
   if (!parsed.success) {
@@ -69,7 +69,7 @@ export async function createApiKeyAction(
  * @param id Identifier of the key.
  */
 export async function revokeApiKeyAction(id: string): Promise<{ok: boolean}> {
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   try {
     // Scoping the update to the owner stops one account revoking another's key.

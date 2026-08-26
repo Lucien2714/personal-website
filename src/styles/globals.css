@@ -579,3 +579,78 @@ html[data-theme='dark'] .shiki span {
     background-color: var(--color-accent);
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Rendered comments
+ *
+ * Much plainer than `.prose-anime`. A comment sits inside a conversation, so
+ * it should read as speech rather than as another article: same body size as
+ * the surrounding UI, tighter spacing, no decorative rules.
+ * ------------------------------------------------------------------------ */
+
+.prose-comment {
+  color: var(--color-ink);
+  font-size: 0.94rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.prose-comment > * + * {
+  margin-top: 0.75em;
+}
+
+.prose-comment a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-comment a:hover {
+  color: var(--color-cyan);
+}
+
+.prose-comment ul,
+.prose-comment ol {
+  padding-inline-start: 1.25rem;
+}
+
+.prose-comment ul {
+  list-style: disc;
+}
+
+.prose-comment ol {
+  list-style: decimal;
+}
+
+.prose-comment blockquote {
+  margin-inline: 0;
+  padding: 0.35rem 0.8rem;
+  border-inline-start: 2px solid var(--color-border-strong);
+  color: var(--color-ink-muted);
+}
+
+.prose-comment :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 0.1em 0.32em;
+  border-radius: 0.25rem;
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+}
+
+.prose-comment pre {
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-sunken);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* A comment cannot contain headings, but the sanitiser strips the tag and
+ * keeps the text, so its paragraphs must not inherit heading weight. */
+.prose-comment p {
+  font-weight: 400;
+}

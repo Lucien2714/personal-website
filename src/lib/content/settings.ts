@@ -39,6 +39,30 @@ const siteSettingsSchema = z.object({
   socialLinks: z.array(socialLinkSchema).default([]),
   /** Repository URL shown in the footer. Empty hides the link. */
   sourceRepoUrl: z.string().default(''),
+  // --- Comments ------------------------------------------------------
+  /** Master switch. Turning it off hides every comment section at once. */
+  commentsEnabled: z.boolean().default(true),
+  /**
+   * When a submitted comment becomes visible.
+   *
+   * Kept as a setting rather than a constant so the policy can be
+   * tightened from the console the day it is needed, without a deploy and
+   * without a migration. Sign-in is required either way, which is what
+   * makes `none` a defensible default: a spammer needs a real GitHub or
+   * Gitee account per identity, not just a script.
+   */
+  commentModeration: z.enum(['none', 'first-post', 'all']).default('none'),
+  /** Where a comment box appears. */
+  commentsOnPosts: z.boolean().default(true),
+  commentsOnMoments: z.boolean().default(true),
+  commentsOnProjects: z.boolean().default(true),
+  /**
+   * Days after publication before comments close. Zero keeps them open
+   * forever, which is the default; old posts attract spam, so this exists
+   * for the day that becomes a nuisance.
+   */
+  commentsCloseAfterDays: z.number().int().min(0).max(3650).default(0),
+
   /** Analytics snippet identifier; empty disables analytics entirely. */
   umamiWebsiteId: z.string().default(''),
   umamiHost: z.string().default(''),

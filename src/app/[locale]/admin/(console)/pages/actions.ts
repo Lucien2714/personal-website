@@ -3,7 +3,7 @@
 import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {savePage} from '@/lib/content/authoring';
 import {db} from '@/lib/db';
 
@@ -22,6 +22,7 @@ const RESERVED_SLUGS = new Set([
   'projects',
   'archives',
   'api',
+  'signin',
   'new',
 ]);
 
@@ -67,7 +68,7 @@ export interface SavePageResult {
  * @param input The editor payload.
  */
 export async function savePageAction(input: unknown): Promise<SavePageResult> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   const parsed = pageSchema.safeParse(input);
   if (!parsed.success) {
@@ -109,7 +110,7 @@ export async function savePageAction(input: unknown): Promise<SavePageResult> {
  * @param slug Slug of the page.
  */
 export async function deletePageAction(slug: string): Promise<{ok: boolean}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   try {
     await db.page.delete({where: {slug}});

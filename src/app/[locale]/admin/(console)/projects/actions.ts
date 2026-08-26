@@ -3,7 +3,7 @@
 import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {saveProject} from '@/lib/content/authoring';
 import {db} from '@/lib/db';
 
@@ -49,7 +49,7 @@ export interface SaveProjectResult {
 export async function saveProjectAction(
   input: unknown,
 ): Promise<SaveProjectResult> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) {
@@ -108,7 +108,7 @@ export async function saveProjectAction(
  * @param id Identifier of the project.
  */
 export async function deleteProjectAction(id: string): Promise<{ok: boolean}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   try {
     await db.project.delete({where: {id}});

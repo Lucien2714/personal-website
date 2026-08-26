@@ -5,7 +5,7 @@ import {signOutAction} from '@/app/[locale]/admin/login/actions';
 import {AdminNav} from '@/components/admin/AdminNav';
 import {Link} from '@/i18n/navigation';
 import type {AppLocale} from '@/i18n/routing';
-import {requireUser} from '@/lib/auth/guard';
+import {requireStaff} from '@/lib/auth/guard';
 
 /**
  * The console shell.
@@ -29,7 +29,7 @@ export default async function ConsoleLayout({
   setRequestLocale(locale);
 
   const [user, t, tAuth] = await Promise.all([
-    requireUser(locale, `/${locale}/admin`),
+    requireStaff(locale, `/${locale}/admin`),
     getTranslations('admin'),
     getTranslations('auth'),
   ]);

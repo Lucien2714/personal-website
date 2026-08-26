@@ -12,6 +12,7 @@ Sign in at `/{locale}/admin`. The sections:
 | Projects | Portfolio entries, including embeds |
 | Pages | Standalone pages such as About |
 | Media | Uploaded files, with a copy-URL button |
+| Comments | Moderation queue, and blocking a commenter |
 | API keys | Credentials for your other projects |
 | Settings | Avatar, hero copy, social links |
 
@@ -77,6 +78,54 @@ applications appears inside this site.
 The iframe grants `allow-scripts allow-forms allow-popups` and withholds
 `allow-same-origin`, so the embedded page cannot reach this document. Build the
 embedded view as a self-contained panel; see [`api.md`](api.md#embedding-a-project-in-the-site).
+
+## Comments
+
+Readers sign in with GitHub or Gitee and comment on posts, moments and
+projects. Setting the providers up is covered in [auth.md](auth.md).
+
+### The default policy
+
+Every comment is published immediately. That is defensible here because
+signing in is required: a spammer needs a real GitHub or Gitee account per
+identity, not just a script. Posting is also rate limited to five comments a
+minute per account.
+
+If that stops being enough, **Settings** has `commentModeration`:
+
+| Value | Behaviour |
+| --- | --- |
+| `none` | Published immediately (default) |
+| `first-post` | A person's first comment waits for you; after one is approved, the rest go straight through |
+| `all` | Everything waits |
+
+Changing it takes effect on the next comment. Nothing already published is
+affected, and no migration is involved.
+
+### Moderating
+
+The **Comments** section lists every comment by status - pending, published,
+spam, deleted - with counts, so an empty queue is visible without clicking
+into it. Each row can be approved, marked spam, or deleted.
+
+Nothing is hard-deleted. A hidden comment stays in the table so the decision
+is reversible, and so its author is not told which of their comments
+disappeared. A reply whose parent is hidden is promoted to the top level
+rather than vanishing with it - the answer may stand on its own.
+
+**Block** hides everything a person has written and stops them writing more.
+They can still sign in; only posting is withdrawn. Refusing the sign-in
+outright would make the block obvious and invite a second account.
+
+### What a comment may contain
+
+A deliberately narrow subset of Markdown: bold, italics, links, inline code,
+code blocks, quotes, lists and strikethrough. Headings, images, tables and
+raw HTML are stripped - a comment should not be able to restructure the page
+it sits on, and an image in a comment is the usual tracking-pixel vector.
+
+Outgoing links get `rel="nofollow ugc noopener noreferrer"`, so commenting
+here is worth nothing for search ranking.
 
 ## Migrating from the Jekyll blog
 

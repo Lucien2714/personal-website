@@ -7,7 +7,7 @@ import {FormattedDate} from '@/components/ui/FormattedDate';
 import {Chip} from '@/components/ui/primitives';
 import type {AppLocale} from '@/i18n/routing';
 import {toScopes} from '@/lib/api/keys';
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {db} from '@/lib/db';
 import {env} from '@/lib/env';
 
@@ -29,7 +29,7 @@ export default async function AdminApiKeysPage({
   const {locale} = await params;
   setRequestLocale(locale);
 
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   const [t, keys] = await Promise.all([
     getTranslations('admin'),

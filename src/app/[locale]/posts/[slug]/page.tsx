@@ -3,6 +3,7 @@ import Image from 'next/image';
 import {notFound} from 'next/navigation';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 
+import {CommentSection} from '@/components/comment/CommentSection';
 import {TableOfContents} from '@/components/post/TableOfContents';
 import {FormattedDate} from '@/components/ui/FormattedDate';
 import {Chip, Container} from '@/components/ui/primitives';
@@ -187,6 +188,12 @@ export default async function PostPage({
               </Link>
             )}
           </nav>
+
+          <CommentSection
+            target={{type: 'post', id: post.id}}
+            publishedAt={post.publishedAt}
+            returnTo={`/${locale}/posts/${encodeURIComponent(post.slug)}`}
+          />
         </article>
 
         <aside className="hidden lg:sticky lg:top-24 lg:block lg:self-start">

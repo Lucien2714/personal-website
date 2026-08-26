@@ -51,6 +51,15 @@ const serverSchema = z.object({
   UPLOAD_DIR: z.string().default('./public/uploads'),
   UPLOAD_MAX_BYTES: positiveIntWithDefault(10 * 1024 * 1024),
 
+  // --- OAuth sign-in for readers -------------------------------------
+  // Each provider is optional. A provider whose id and secret are both
+  // absent is simply not offered on the sign-in page, so the site works
+  // with one, both, or none of them configured.
+  OAUTH_GITHUB_CLIENT_ID: z.string().optional(),
+  OAUTH_GITHUB_CLIENT_SECRET: z.string().optional(),
+  OAUTH_GITEE_CLIENT_ID: z.string().optional(),
+  OAUTH_GITEE_CLIENT_SECRET: z.string().optional(),
+
   API_CORS_ORIGINS: z.string().default('*'),
   API_RATE_LIMIT_PER_MINUTE: positiveIntWithDefault(120),
 });

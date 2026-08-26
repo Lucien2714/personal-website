@@ -170,6 +170,20 @@ curl -X POST https://lucien2714.com/api/v1/moments \
   -d '{"body": "Ranked grind, day three.", "mood": "🎮", "location": "San Diego"}'
 ```
 
+### `GET /api/v1/posts/{slug}/comments`
+
+The published thread on a post, threaded one level deep. Email addresses are
+never included; the author fields are exactly what the site itself renders.
+
+Read-only. Posting a comment needs a **reader session**, not an API key: a
+comment is attributed to a person, and a key belongs to a program, so letting
+a key write one would mean either inventing an author or attributing every
+comment to the site owner.
+
+```bash
+curl "https://lucien2714.com/api/v1/posts/my-post/comments"
+```
+
 ### `GET /api/v1/projects`, `GET /api/v1/projects/{slug}`
 
 `featured=true` restricts the list. Useful in reverse: a project's own site can

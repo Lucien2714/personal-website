@@ -2,7 +2,7 @@
 
 import {revalidatePath} from 'next/cache';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {
   type SiteSettings,
   siteSettingsSchema,
@@ -26,7 +26,7 @@ export type SaveSettingsResult =
 export async function saveSettingsAction(
   input: unknown,
 ): Promise<SaveSettingsResult> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   const parsed = siteSettingsSchema.partial().safeParse(input);
   if (!parsed.success) {

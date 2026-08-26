@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import {useTranslations} from 'next-intl';
-import {useState} from 'react';
+import {type ReactNode, useState} from 'react';
 
 import {LocaleSwitcher} from '@/components/layout/LocaleSwitcher';
 import {ThemeToggle} from '@/components/theme/ThemeToggle';
@@ -23,6 +23,14 @@ export interface SiteHeaderProps {
   avatarUrl: string;
   /** Extra entries contributed by editable pages, such as About. */
   extraItems: NavItem[];
+  /**
+   * The account area, rendered by the server layout and passed in.
+   *
+   * This component is a client component (it owns the mobile menu state),
+   * and a client component cannot render a server one as a child - but it
+   * can receive one as a prop.
+   */
+  accountSlot: ReactNode;
 }
 
 /**
@@ -35,6 +43,7 @@ export function SiteHeader({
   siteTitle,
   avatarUrl,
   extraItems,
+  accountSlot,
 }: SiteHeaderProps) {
   const t = useTranslations('nav');
   const pathname = usePathname();
@@ -119,6 +128,7 @@ export function SiteHeader({
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-4">
+          <span className="hidden sm:inline-flex">{accountSlot}</span>
           <LocaleSwitcher className="hidden sm:inline-flex" />
           <ThemeToggle />
           <button
@@ -160,8 +170,9 @@ export function SiteHeader({
               </li>
             ))}
           </ul>
-          <div className="mt-3 sm:hidden">
+          <div className="mt-3 flex flex-wrap items-center gap-2 sm:hidden">
             <LocaleSwitcher />
+            {accountSlot}
           </div>
         </nav>
       )}

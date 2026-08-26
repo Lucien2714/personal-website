@@ -1,8 +1,8 @@
 # personal-website
 
 Lucien's personal site: a bilingual blog with an admin console, a moments
-stream, a project showcase that can embed other applications, and a public
-REST API.
+stream, a project showcase that can embed other applications, reader sign-in
+with comments, and a public REST API.
 
 Built with Next.js 16 (App Router), TypeScript, PostgreSQL via Prisma, and
 Tailwind CSS v4. Self-hosted with Docker Compose behind Caddy.
@@ -49,7 +49,9 @@ npm run content:import -- --source ../blog          # add --dry-run first
 | Projects | `/{locale}/projects` | Cards, and a sandboxed embed per project |
 | Archives | `/{locale}/archives` | Everything by year |
 | Pages | `/{locale}/{slug}` | Editable standalone pages, e.g. `/about` |
-| Console | `/{locale}/admin` | Sign-in required |
+| Moment | `/{locale}/moments/{id}` | One moment and its thread |
+| Sign in | `/{locale}/signin` | Reader sign-in via GitHub or Gitee |
+| Console | `/{locale}/admin` | Staff only; readers are refused |
 | API | `/api/v1` | Public reads, key-authenticated writes |
 | Feed | `/feed.xml` | Both languages in one RSS document |
 
@@ -82,8 +84,15 @@ Development helpers in `scripts/`:
   curl.
 - `dev-api-key.ts` mints an API key without opening the console.
 - `dev-reset-content.ts` clears local content; `--all` clears posts too.
+- `dev-reader.ts` creates a throwaway reader account and prints its session
+  cookie, for checking what a reader can and cannot reach without standing up
+  a real OAuth provider.
+- `dev-seed-comments.ts` inserts a sample thread; `--clear` removes them.
+- `set-password.ts` resets an account password. This one *is* allowed to run
+  in production, because being locked out of the console is worse than the
+  risk it carries.
 
-All three refuse to run when `NODE_ENV=production`.
+All of them except `set-password.ts` refuse to run when `NODE_ENV=production`.
 
 ---
 
@@ -94,8 +103,10 @@ All three refuse to run when `NODE_ENV=production`.
 - [`docs/api.md`](docs/api.md) — the public API, with worked examples.
 - [`docs/deployment.md`](docs/deployment.md) — deploying to a VPS, backups,
   upgrades.
-- [`docs/content.md`](docs/content.md) — writing, publishing, and the Jekyll
-  migration.
+- [`docs/content.md`](docs/content.md) — writing, publishing, moderating
+  comments, and the Jekyll migration.
+- [`docs/auth.md`](docs/auth.md) — reader sign-in, the role boundary, and
+  adding an OAuth provider.
 
 ---
 

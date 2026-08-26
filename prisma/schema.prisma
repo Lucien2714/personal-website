@@ -40,38 +40,93 @@ enum PublishStatus {
 }
 
 /// Coarse-grained permission level of an account.
+///
+/// The ordering matters to the guards in src/lib/auth/guard.ts: ADMIN and
+/// EDITOR are *staff* and may reach the console, READER is not and may only
+/// comment. Anything added here has to be classified in `STAFF_ROLES` there,
+/// or it silently gains or loses console access.
 enum UserRole {
   /// Full access, including user and API-key management.
   ADMIN
   /// May write and publish content but not manage accounts.
   EDITOR
+  /// A visitor who signed in to comment. No console access whatsoever.
+  READER
+}
+
+/// Where an account came from.
+enum AuthProvider {
+  /// Email and password, used by the site owner.
+  CREDENTIALS
+  GITHUB
+  GITEE
 }
 
 // ---------------------------------------------------------------------------
 // Identity
 // ---------------------------------------------------------------------------
 
-/// A person who can sign in to the admin area.
+/// A person with an account: the site owner, or a reader who signed in to
+/// comment.
 model User {
   id           String    @id @default(cuid())
+  /// Unique, but readers who sign in through a provider that withholds their
+  /// address get a synthetic one; see src/lib/auth/oauth/link.ts.
   email        String    @unique
   displayName  String
-  /// scrypt hash produced by src/lib/auth/password.ts. Never leaves the server.
-  passwordHash String
+  /// scrypt hash produced by src/lib/auth/password.ts. Never leaves the
+  /// server, and is null for accounts that only ever sign in through OAuth -
+  /// which is every reader.
+  passwordHash String?
   avatarUrl    String?
   bio          String?
-  role         UserRole  @default(EDITOR)
+  /// Optional personal site, shown next to a reader's comments.
+  websiteUrl   String?
+  role         UserRole  @default(READER)
+  /// Set when the owner blocks someone. A blocked account can still sign in
+  /// but its comments stop being published, which is quieter - and therefore
+  /// less likely to provoke a second account - than refusing the sign-in.
+  blockedAt    DateTime?
   lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   sessions Session[]
+  accounts Account[]
   posts    Post[]
   moments  Moment[]
   media    Media[]
   apiKeys  ApiKey[]
+  comments Comment[]
 
+  @@index([role])
   @@map("users")
+}
+
+/// One external identity linked to a {@link User}.
+///
+/// Kept separate from `User` so that the same person signing in with GitHub
+/// and later with Gitee ends up as one account with two links, rather than two
+/// accounts. Nothing here is a secret: access tokens are used once, during the
+/// callback, and deliberately not stored - the site never calls a provider's
+/// API on the reader's behalf, so keeping a token would be holding a
+/// credential with no purpose.
+model Account {
+  id                String       @id @default(cuid())
+  userId            String
+  provider          AuthProvider
+  /// The provider's own immutable identifier for this person. Not their
+  /// username, which they can change.
+  providerAccountId String
+  /// Username at the provider, kept only to show where a comment came from.
+  providerUsername  String?
+  createdAt         DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
 }
 
 /// A server-side record of an issued sign-in token.
@@ -117,6 +172,7 @@ model Post {
   deletedAt   DateTime?
 
   author       User              @relation(fields: [authorId], references: [id])
+  comments     Comment[]
   translations PostTranslation[]
   categories   Category[]        @relation("PostCategories")
   tags         Tag[]             @relation("PostTags")
@@ -133,18 +189,18 @@ model PostTranslation {
   locale Locale
 
   /// URL segment, unique within a locale.
-  slug String
-  title String
+  slug            String
+  title           String
   /// Short summary used for cards, SEO descriptions and the syndication feed.
-  description String?
+  description     String?
   /// Author-authored Markdown, the source of truth.
-  bodyMarkdown String
+  bodyMarkdown    String
   /// Sanitised HTML rendered from `bodyMarkdown` at save time.
-  bodyHtml String
+  bodyHtml        String
   /// Extracted headings, stored as JSON for the table of contents.
   tableOfContents Json?
   /// Estimated reading time in minutes, computed at save time.
-  readingMinutes Int @default(1)
+  readingMinutes  Int     @default(1)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -159,10 +215,10 @@ model PostTranslation {
 
 /// A taxonomy bucket. Categories are broad, and a post usually has one or two.
 model Category {
-  id   String @id @default(cuid())
-  slug String @unique
+  id        String   @id @default(cuid())
+  slug      String   @unique
   /// Display name per locale, keyed by the `Locale` enum value.
-  names Json
+  names     Json
   /// Optional accent colour (hex) used by the category chips.
   color     String?
   createdAt DateTime @default(now())
@@ -190,15 +246,15 @@ model Tag {
 
 /// A singleton page addressed by slug, for example `/about`.
 model Page {
-  id       String        @id @default(cuid())
-  slug     String        @unique
-  status   PublishStatus @default(PUBLISHED)
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  status    PublishStatus @default(PUBLISHED)
   /// Position in the site navigation, lower sorts first. Null hides the page.
-  navOrder Int?
+  navOrder  Int?
   /// Icon name shown next to the navigation entry.
   icon      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   translations PageTranslation[]
 
@@ -229,20 +285,21 @@ model PageTranslation {
 /// Moments are deliberately not translated. They are quick thoughts, and
 /// forcing a second language on them would stop them being quick.
 model Moment {
-  id       String        @id @default(cuid())
-  authorId String
-  status   PublishStatus @default(PUBLISHED)
-  body     String
+  id        String        @id @default(cuid())
+  authorId  String
+  status    PublishStatus @default(PUBLISHED)
+  body      String
   /// Ordered list of image URLs, stored as a JSON array of strings.
-  images   Json          @default("[]")
+  images    Json          @default("[]")
   /// Optional emoji or short mood token rendered as a badge.
   mood      String?
   location  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   deletedAt DateTime?
 
-  author User @relation(fields: [authorId], references: [id])
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
 
   @@index([status, createdAt])
   @@map("moments")
@@ -258,24 +315,25 @@ model Moment {
 /// yours can be rendered inside a card on this site without this codebase
 /// knowing anything about it.
 model Project {
-  id       String        @id @default(cuid())
-  slug     String        @unique
-  status   PublishStatus @default(PUBLISHED)
-  repoUrl  String?
-  liveUrl  String?
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  status      PublishStatus @default(PUBLISHED)
+  repoUrl     String?
+  liveUrl     String?
   /// URL rendered inside a sandboxed iframe on the project page.
-  embedUrl String?
+  embedUrl    String?
   /// Iframe height in CSS pixels, used when `embedUrl` is set.
   embedHeight Int?
   coverUrl    String?
   /// Technology chips, stored as a JSON array of strings.
-  techStack Json    @default("[]")
-  sortOrder Int     @default(0)
-  featured  Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  techStack   Json          @default("[]")
+  sortOrder   Int           @default(0)
+  featured    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   translations ProjectTranslation[]
+  comments     Comment[]
 
   @@index([status, sortOrder])
   @@map("projects")
@@ -304,20 +362,20 @@ model ProjectTranslation {
 /// An uploaded file. Bytes live on disk (a Docker volume in production); this
 /// row is the index over them.
 model Media {
-  id         String @id @default(cuid())
-  uploaderId String
+  id           String   @id @default(cuid())
+  uploaderId   String
   /// Path relative to the upload root, for example `2026/08/cover-a1b2c3.png`.
-  storageKey   String @unique
+  storageKey   String   @unique
   originalName String
   mimeType     String
   byteSize     Int
   width        Int?
   height       Int?
   /// Alternative text. Empty string means decorative, null means unset.
-  altText  String?
+  altText      String?
   /// SHA-256 of the file contents, used to skip duplicate uploads.
-  checksum  String
-  createdAt DateTime @default(now())
+  checksum     String
+  createdAt    DateTime @default(now())
 
   uploader User @relation(fields: [uploaderId], references: [id])
 
@@ -333,15 +391,15 @@ model Media {
 /// A credential handed to one of your other projects so that it can call the
 /// write side of `/api/v1`.
 model ApiKey {
-  id      String @id @default(cuid())
-  ownerId String
-  name    String
+  id         String    @id @default(cuid())
+  ownerId    String
+  name       String
   /// First characters of the key, kept in clear text so that the admin UI can
   /// show which key a row refers to.
-  prefix String
+  prefix     String
   /// SHA-256 of the full key. The key itself is shown exactly once, at
   /// creation time, and is not recoverable afterwards.
-  keyHash String @unique
+  keyHash    String    @unique
   /// Granted scopes, stored as a JSON array of strings.
   scopes     Json      @default("[]")
   lastUsedAt DateTime?
@@ -369,4 +427,76 @@ model SiteSetting {
   updatedAt DateTime @updatedAt
 
   @@map("site_settings")
+}
+
+// ---------------------------------------------------------------------------
+// Comments
+// ---------------------------------------------------------------------------
+
+/// Visibility of a comment.
+enum CommentStatus {
+  /// Waiting for the owner to approve it. Only produced when the moderation
+  /// policy in the site settings asks for it.
+  PENDING
+  /// Visible to everyone.
+  PUBLISHED
+  /// Hidden as spam. Kept rather than deleted so the decision is reversible
+  /// and so the author is not told which of their comments vanished.
+  SPAM
+}
+
+/// A comment on a post, a moment or a project.
+///
+/// The target is modelled as three nullable foreign keys rather than a
+/// `targetType`/`targetId` pair. That costs a check constraint's worth of
+/// discipline - exactly one must be set, enforced in
+/// src/lib/content/comments.ts - and buys real referential integrity: deleting
+/// a post takes its comments with it, which a polymorphic pair cannot express
+/// and would eventually leave orphaned rows behind.
+model Comment {
+  id        String  @id @default(cuid())
+  postId    String?
+  momentId  String?
+  projectId String?
+
+  authorId String
+  /// Set when this is a reply. Replies are one level deep: a reply to a reply
+  /// is stored against the same parent and addresses its target by mention,
+  /// which keeps the thread readable on a phone.
+  parentId String?
+
+  /// Author-written Markdown, the source of truth.
+  bodyMarkdown String
+  /// Sanitised HTML rendered at save time by
+  /// src/lib/content/comment-markdown.ts, which permits a much narrower set of
+  /// elements than the post renderer does.
+  bodyHtml     String
+
+  status CommentStatus @default(PUBLISHED)
+
+  /// Recorded for moderation: enough to recognise a flood from one source,
+  /// and dropped when the comment is deleted.
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  /// Set when the author edits their own comment, so the UI can say so.
+  editedAt  DateTime?
+  deletedAt DateTime?
+
+  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post    Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  moment  Moment?   @relation(fields: [momentId], references: [id], onDelete: Cascade)
+  project Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([postId, status, createdAt])
+  @@index([momentId, status, createdAt])
+  @@index([projectId, status, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status, createdAt])
+  @@map("comments")
 }

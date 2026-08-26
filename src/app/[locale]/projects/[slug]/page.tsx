@@ -3,6 +3,7 @@ import Image from 'next/image';
 import {notFound} from 'next/navigation';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 
+import {CommentSection} from '@/components/comment/CommentSection';
 import {ProjectEmbed} from '@/components/project/ProjectEmbed';
 import {Chip, Container} from '@/components/ui/primitives';
 import {Link} from '@/i18n/navigation';
@@ -132,6 +133,13 @@ export default async function ProjectPage({
           dangerouslySetInnerHTML={{__html: project.bodyHtml}}
         />
       )}
+
+      <div className="max-w-3xl">
+        <CommentSection
+          target={{type: 'project', id: project.id}}
+          returnTo={`/${locale}/projects/${project.slug}`}
+        />
+      </div>
     </Container>
   );
 }

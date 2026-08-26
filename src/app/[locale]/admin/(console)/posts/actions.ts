@@ -3,7 +3,7 @@
 import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {savePost, softDeletePost} from '@/lib/content/authoring';
 import {renderMarkdown} from '@/lib/content/markdown';
 import {db} from '@/lib/db';
@@ -53,7 +53,7 @@ export interface SavePostResult {
  * @param input The editor payload, already JSON-serialisable.
  */
 export async function savePostAction(input: unknown): Promise<SavePostResult> {
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   const parsed = postFormSchema.safeParse(input);
   if (!parsed.success) {
@@ -118,7 +118,7 @@ export async function savePostAction(input: unknown): Promise<SavePostResult> {
  * @param postId Identifier of the post to remove.
  */
 export async function deletePostAction(postId: string): Promise<{ok: boolean}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   try {
     await softDeletePost(postId);
@@ -142,7 +142,7 @@ export async function deletePostAction(postId: string): Promise<{ok: boolean}> {
 export async function previewMarkdownAction(
   markdown: string,
 ): Promise<{html: string}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   const rendered = await renderMarkdown(markdown);
   return {html: rendered.html};
@@ -163,7 +163,7 @@ export interface TaxonomySuggestion {
 export async function listTaxonomySuggestionsAction(
   locale: 'EN' | 'ZH',
 ): Promise<{categories: TaxonomySuggestion[]; tags: TaxonomySuggestion[]}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   const [categories, tags] = await Promise.all([
     db.category.findMany({select: {slug: true, names: true}}),

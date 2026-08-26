@@ -3,7 +3,7 @@
 import {revalidatePath} from 'next/cache';
 import {z} from 'zod';
 
-import {requireUserForAction} from '@/lib/auth/guard';
+import {requireStaffForAction} from '@/lib/auth/guard';
 import {saveMoment} from '@/lib/content/authoring';
 import {db} from '@/lib/db';
 import {storeUpload} from '@/lib/media/storage';
@@ -33,7 +33,7 @@ export interface SaveMomentResult {
 export async function saveMomentAction(
   input: unknown,
 ): Promise<SaveMomentResult> {
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   const parsed = momentSchema.safeParse(input);
   if (!parsed.success) {
@@ -68,7 +68,7 @@ export async function saveMomentAction(
  * @param id Identifier of the moment.
  */
 export async function deleteMomentAction(id: string): Promise<{ok: boolean}> {
-  await requireUserForAction();
+  await requireStaffForAction();
 
   try {
     await db.moment.update({
@@ -94,7 +94,7 @@ export async function deleteMomentAction(id: string): Promise<{ok: boolean}> {
 export async function uploadImageAction(
   formData: FormData,
 ): Promise<{ok: true; url: string} | {ok: false; message: string}> {
-  const user = await requireUserForAction();
+  const user = await requireStaffForAction();
 
   const file = formData.get('file');
   if (!(file instanceof File)) {

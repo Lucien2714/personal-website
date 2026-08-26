@@ -17,6 +17,7 @@ const SECTIONS = [
   {href: '/admin', key: 'dashboard', icon: '📊', exact: true},
   {href: '/admin/posts', key: 'posts', icon: '📝', exact: false},
   {href: '/admin/moments', key: 'moments', icon: '🌙', exact: false},
+  {href: '/admin/comments', key: 'comments.title', icon: '💬', exact: false},
   {href: '/admin/projects', key: 'projects', icon: '🛠', exact: false},
   {href: '/admin/pages', key: 'pages', icon: '📄', exact: false},
   {href: '/admin/media', key: 'media', icon: '🖼', exact: false},
