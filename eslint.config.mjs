@@ -21,6 +21,22 @@ import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
  *   * Type-aware rules are scoped to `.ts`/`.tsx`. Applying them to this file,
  *     or to any other plain JavaScript, asks the type checker for information
  *     that does not exist and fails outright.
+ *
+ * ESLint is deliberately held at 9.x, which npm reports as deprecated on every
+ * install. Do not "fix" that warning by bumping it: `@typescript-eslint/parser`
+ * 8.x produces a scope manager without `ScopeManager.addGlobals`, which ESLint
+ * 10 calls on every file, so linting dies with
+ * `TypeError: scopeManager.addGlobals is not a function` before it checks
+ * anything. typescript-eslint 8.68 advertises `eslint@^10` as a peer, but that
+ * range is optimistic — the combination was tried and does not run. Both
+ * parsers in play here (ours and the one `eslint-config-next` installs) are
+ * that same package, so no configuration change avoids it.
+ *
+ * Revisit when typescript-eslint ships a release that genuinely supports
+ * ESLint 10; the upgrade is then `eslint` and `@eslint/js` to `^10`, and a
+ * regenerated lock file. ESLint runs only in CI and on a developer's machine —
+ * it is a dev dependency and is not present in the runtime image — so the
+ * deprecation notice carries no production risk in the meantime.
  */
 export default tseslint.config(
   {
