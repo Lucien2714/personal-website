@@ -3,6 +3,12 @@
 Deploying to a single VPS with Docker Compose. Four services: a one-shot
 `migrate` job, the app, PostgreSQL, and Caddy for TLS.
 
+Every command below runs from the repository root. `docker-compose.yml` sits
+there rather than in `docker/` (which holds the Dockerfile and the Caddyfile)
+because Compose reads `${VAR}` substitutions from a `.env` beside the compose
+file — a different mechanism from `env_file:`, and one that would otherwise
+need a second `.env` with duplicated contents.
+
 > **Running project scripts.** The runtime image contains only the compiled
 > server - no source tree, no `tsx`, no dev dependencies. Anything that runs a
 > script from `scripts/` or `prisma/` therefore goes through the `migrate`
@@ -43,10 +49,9 @@ Edit `.env`. The values that must change:
 `DATABASE_URL` is rewritten by the compose file from the `POSTGRES_*` values,
 so it does not need to be correct in `.env` for the Docker deployment.
 
-Then:
+Then, from the repository root:
 
 ```bash
-cd docker
 docker compose up -d --build
 ```
 
@@ -114,7 +119,6 @@ rather than duplicates.
 ```bash
 cd /opt/personal-website
 git pull
-cd docker
 docker compose up -d --build
 ```
 
@@ -137,8 +141,8 @@ Uploaded files come second.
 A nightly dump into the bind-mounted `docker/backups` directory:
 
 ```cron
-0 3 * * * cd /opt/personal-website/docker && docker compose exec -T postgres \
-  pg_dump -U website personal_website | gzip > backups/db-$(date +\%F).sql.gz
+0 3 * * * cd /opt/personal-website && docker compose exec -T postgres \
+  pg_dump -U website personal_website | gzip > docker/backups/db-$(date +\%F).sql.gz
 0 4 * * * find /opt/personal-website/docker/backups -name 'db-*.sql.gz' -mtime +30 -delete
 ```
 
@@ -157,9 +161,8 @@ not a backup.
 ### Restoring
 
 ```bash
-cd docker
 docker compose stop app
-gunzip -c backups/db-2026-08-26.sql.gz | \
+gunzip -c docker/backups/db-2026-08-26.sql.gz | \
   docker compose exec -T postgres psql -U website -d personal_website
 docker compose start app
 ```

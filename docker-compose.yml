@@ -1,13 +1,19 @@
 # Production stack for a single VPS.
 #
-#   cd docker
-#   cp ../.env.example ../.env   # then fill in real values
+#   cp .env.example .env   # then fill in real values
 #   docker compose up -d --build
 #
-# Three services: the app, Postgres, and Caddy as the TLS-terminating reverse
-# proxy. Caddy is included because obtaining and renewing a certificate is
-# otherwise the one manual step that gets forgotten; it does it automatically
-# from the domain name in Caddyfile.
+# This file lives at the repository root, not beside the Dockerfile, because
+# Compose resolves `${VAR}` substitutions from a `.env` in the *directory
+# containing the compose file*. That is a different mechanism from the
+# `env_file:` key below, and it does not read it. With the compose file in
+# docker/, the two would need separate .env files whose contents had to agree,
+# and the day they stopped agreeing would be a confusing one to debug.
+#
+# Four services: a one-shot migration job, the app, Postgres, and Caddy as the
+# TLS-terminating reverse proxy. Caddy is included because obtaining and
+# renewing a certificate is otherwise the one manual step that gets forgotten;
+# it does that automatically from the domain name in docker/Caddyfile.
 #
 # Only Caddy publishes ports. Postgres and the app are reachable on the
 # internal network alone, so neither is exposed to the internet even if the
@@ -22,15 +28,30 @@ services:
   #
   # It runs from the builder stage because that is where the complete
   # dependency tree lives; the runtime image carries only the server bundle.
+  #
+  # This is also the service used to run one-off project scripts, as
+  # `docker compose run --rm migrate npx tsx <script>` - seeding, the Jekyll
+  # import, a password reset. Those scripts import src/lib/env.ts, which
+  # validates the *whole* environment at import time, so this service needs the
+  # same env_file the app does. `prisma migrate deploy` alone would not.
   migrate:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
       target: builder
     command: npx prisma migrate deploy
     restart: 'no'
+    env_file:
+      - .env
     environment:
+      # Overrides whatever .env says: inside the network the database is
+      # reachable by service name, not on localhost.
       DATABASE_URL: postgresql://${POSTGRES_USER:-website}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-personal_website}?schema=public
+      UPLOAD_DIR: /app/public/uploads
+    volumes:
+      # Mounted so that scripts writing media (the Jekyll import) put files
+      # where the app will serve them from.
+      - uploads:/app/public/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,12 +60,12 @@ services:
 
   app:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     image: personal-website:latest
     restart: unless-stopped
     env_file:
-      - ../.env
+      - .env
     environment:
       NODE_ENV: production
       # Overrides whatever .env says: inside the network the database is
@@ -84,7 +105,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # Nightly dumps land here; see docs/deployment.md for the cron entry.
-      - ./backups:/backups
+      - ./docker/backups:/backups
     networks:
       - internal
     healthcheck:
@@ -108,7 +129,7 @@ services:
       # Set SITE_DOMAIN in .env, e.g. lucien2714.com
       SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
     depends_on:
