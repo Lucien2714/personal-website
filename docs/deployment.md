@@ -301,3 +301,60 @@ Both the app container and the compose service poll `GET /api/v1`, which
 returns the service document without touching the database. A failing check
 means the process is wedged; database problems surface as 500s in the logs
 instead.
+
+## Putting a CDN in front
+
+Caddy terminates TLS itself and obtains its own certificate. A proxying CDN in
+front of it — Cloudflare with the orange cloud on, most commonly — changes that
+arrangement in two ways that are worth understanding before switching it on,
+because both fail in ways whose error messages point somewhere else.
+
+### `ERR_TOO_MANY_REDIRECTS`
+
+Cloudflare's **Flexible** SSL mode means "HTTPS to the browser, HTTP to the
+origin". Caddy's automatic HTTPS answers any plain HTTP request with a 308 to
+the HTTPS URL. So Cloudflare fetches over HTTP, gets a 308, hands it to the
+browser, the browser asks again over HTTPS, Cloudflare fetches over HTTP
+again — and around it goes.
+
+Two things make this worse than it first looks:
+
+- **A 308 is a permanent redirect, and browsers cache it.** Fixing the origin
+  does not fix the browser, which replays the cached redirect without asking
+  the server. Verify with `curl` (which ignores that cache) and test in a
+  private window.
+- This site sends HSTS with a one-year `max-age`. Once a browser has seen it,
+  that browser will not speak plain HTTP to the domain again for a year. Clear
+  it at `chrome://net-internals/#hsts` if a test needs HTTP.
+
+Confirm whether requests are still arriving through the CDN by looking at who
+solved the ACME challenge:
+
+```bash
+docker compose logs caddy | grep "served key authentication"
+```
+
+A `remote` in `104.16.0.0/13` or `172.64.0.0/13` is Cloudflare, not Let's
+Encrypt: the proxy is on, whatever the dashboard appears to say.
+
+### Certificate renewal, sixty days later
+
+`tls-alpn-01` cannot work behind a proxy at all — the CDN terminates TLS, so
+`acme-tls/1` can never be negotiated, and the log says exactly that.
+
+`http-01` does work under Flexible, because the CDN forwards port 80 to the
+origin's port 80 and Caddy serves `/.well-known/acme-challenge/` there without
+redirecting. Under **Full** it forwards to port 443 instead, and whether the
+challenge is still answered is not something to discover when the certificate
+has two days left.
+
+So: switching to Full to escape the redirect loop trades a visible failure for
+a delayed one. If the site is to sit behind a proxy, do it properly with one of
+
+- a **Cloudflare Origin Certificate** installed in Caddy — valid for years, no
+  ACME involved; or
+- the **DNS-01** challenge, which needs a Caddy image built with the
+  Cloudflare DNS module (the stock `caddy:2-alpine` does not have it).
+
+Otherwise leave the record unproxied. Caddy is perfectly capable of serving the
+site directly, and the certificate then renews without anything in the way.
