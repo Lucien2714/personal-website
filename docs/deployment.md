@@ -3,6 +3,12 @@
 Deploying to a single VPS with Docker Compose. Four services: a one-shot
 `migrate` job, the app, PostgreSQL, and Caddy for TLS.
 
+**The server does not build.** `next build` peaks at roughly 1.9 GB of RAM,
+which a small VPS does not have spare — it serves the finished site in a
+fraction of that — and running out mid-build produces an out-of-memory kill
+with no useful message. `.github/workflows/publish.yml` builds on every push to
+`main` and pushes two images to GHCR; deploying is a `pull`.
+
 Every command below runs from the repository root. `docker-compose.yml` sits
 there rather than in `docker/` (which holds the Dockerfile and the Caddyfile)
 because Compose reads `${VAR}` substitutions from a `.env` beside the compose
@@ -10,19 +16,40 @@ file — a different mechanism from `env_file:`, and one that would otherwise
 need a second `.env` with duplicated contents.
 
 > **Running project scripts.** The runtime image contains only the compiled
-> server - no source tree, no `tsx`, no dev dependencies. Anything that runs a
+> server — no source tree, no `tsx`, no dev dependencies. Anything that runs a
 > script from `scripts/` or `prisma/` therefore goes through the `migrate`
-> service, which is built from the stage that does have them:
+> service, which uses the `-tools` image that does have them:
 >
 > ```bash
 > docker compose run --rm migrate npx tsx <script>
 > ```
 
+## The two images
+
+One Dockerfile produces both, and CI pushes both:
+
+| Tag | Contents | Used by |
+| --- | --- | --- |
+| `:latest` | The standalone server and nothing else (~340 MB) | `app` |
+| `:latest-tools` | Dependencies and source, nothing compiled | `migrate`, and one-off scripts |
+
+Both are also tagged with the commit SHA, so rolling back is a matter of
+setting `IMAGE_TAG` in `.env` to a known-good SHA and running `docker compose
+up -d` again.
+
+The tools image is the larger of the two, but its heavy layer is `node_modules`,
+which only changes when `package-lock.json` does. A commit that touches only
+source moves a few megabytes.
+
 ## Prerequisites
 
-- A VPS with Docker and the Compose plugin.
+- A VPS with Docker and the Compose plugin (`docker compose version` must
+  print v2.x — Ubuntu's `docker.io` package does not include it).
 - A domain whose A (and AAAA) records point at the host.
 - Ports 80 and 443 reachable — Caddy needs both to obtain a certificate.
+- The GHCR package set to public, or a pull token on the server (see below).
+
+Notably **not** required: build tooling, or memory headroom for a build.
 
 ## First deploy
 
@@ -48,12 +75,28 @@ Edit `.env`. The values that must change:
 
 `DATABASE_URL` is rewritten by the compose file from the `POSTGRES_*` values,
 so it does not need to be correct in `.env` for the Docker deployment.
+`IMAGE_REPO` should already be right; change it only if the repository moved.
 
 Then, from the repository root:
 
 ```bash
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
+
+Note the absence of `--build`. If you ever see the server start compiling, a
+`build:` key has taken precedence because the image could not be pulled — stop
+it and fix the pull rather than letting it run out of memory.
+
+If the GHCR package is private, sign in on the server first with a personal
+access token that has `read:packages`:
+
+```bash
+echo "$GHCR_TOKEN" | docker login ghcr.io -u lucien2714 --password-stdin
+```
+
+Making the package public instead is simpler and costs nothing here: the image
+contains only code that is already in a public repository.
 
 Compose runs a one-shot `migrate` service that applies pending migrations and
 exits; the app waits for it to succeed before starting, so the schema and the
@@ -116,11 +159,18 @@ rather than duplicates.
 
 ## Updating
 
+Push to `main`, wait for the **Publish images** workflow to go green, then:
+
 ```bash
 cd /opt/personal-website
-git pull
-docker compose up -d --build
+git pull                 # only for docker-compose.yml and .env.example changes
+docker compose pull
+docker compose up -d
 ```
+
+`git pull` is still worth doing, but it no longer supplies the code that runs —
+that arrives in the image. It keeps the compose file and any new settings in
+`.env.example` up to date.
 
 The `migrate` service runs first and the app waits for it. Watch both:
 
@@ -132,6 +182,19 @@ docker compose logs -f app
 A failed migration leaves the old app container running and the new one
 unstarted, which is the right way round: an unmigrated deploy never serves
 traffic.
+
+### Rolling back
+
+Every build is also tagged with its commit SHA. To go back to one:
+
+```bash
+sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG="<the-good-sha>"/' .env
+docker compose pull && docker compose up -d
+```
+
+A rollback does **not** undo migrations. If the bad deploy migrated the
+database, the older image may not understand the new schema — check what the
+migration did before relying on this.
 
 ## Backups
 

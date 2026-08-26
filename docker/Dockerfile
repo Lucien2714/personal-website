@@ -41,14 +41,29 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # ---------------------------------------------------------------------------
-# Build
+# Tools
+#
+# Dependencies plus the source tree, and nothing compiled. This is what runs
+# migrations and one-off scripts (`docker compose run --rm migrate ...`).
+#
+# It is a stage of its own, rather than the build stage, so that its layers stop
+# changing when only the built output would have. The heavy layer here is
+# node_modules, which is inherited from `deps` and only changes when the lock
+# file does; a source-only commit moves a few megabytes rather than the whole
+# tree. On a deployment that pulls images instead of building them, that is the
+# difference between a fast deploy and a slow one.
 # ---------------------------------------------------------------------------
-FROM base AS builder
+FROM base AS tools
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
+FROM tools AS builder
 
 # The build imports src/lib/env.ts, which refuses to start without these.
 # They are placeholders, declared as ARG rather than ENV so that they exist

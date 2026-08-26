@@ -102,7 +102,7 @@ All of them except `set-password.ts` refuse to run when `NODE_ENV=production`.
   and why the significant choices were made.
 - [`docs/api.md`](docs/api.md) — the public API, with worked examples.
 - [`docs/deployment.md`](docs/deployment.md) — deploying to a VPS, backups,
-  upgrades.
+  upgrades. Images are built by CI and pulled by the server; it never compiles.
 - [`docs/content.md`](docs/content.md) — writing, publishing, moderating
   comments, and the Jekyll migration.
 - [`docs/auth.md`](docs/auth.md) — reader sign-in, the role boundary, and
