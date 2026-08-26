@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import {Inter, Space_Grotesk} from 'next/font/google';
+import {cookies} from 'next/headers';
 import {NextIntlClientProvider, hasLocale} from 'next-intl';
 import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {notFound} from 'next/navigation';
@@ -10,11 +11,11 @@ import '@/styles/globals.css';
 import {GridBackdrop} from '@/components/decor/GridBackdrop';
 import {SiteFooter} from '@/components/layout/SiteFooter';
 import {SiteHeader} from '@/components/layout/SiteHeader';
-import {ThemeScript} from '@/components/theme/ThemeScript';
 import {type AppLocale, routing, toPrismaLocale} from '@/i18n/routing';
 import {listNavPages} from '@/lib/content/pages';
 import {getSiteSettings} from '@/lib/content/settings';
 import {env} from '@/lib/env';
+import {THEME_COOKIE_NAME, isExplicitTheme} from '@/lib/theme';
 
 /**
  * The root layout for every localised route.
@@ -114,21 +115,25 @@ export default async function LocaleLayout({
   // components can be statically rendered where they have no data needs.
   setRequestLocale(locale);
 
-  const [settings, navPages, t] = await Promise.all([
+  const [settings, navPages, t, cookieStore] = await Promise.all([
     getSiteSettings(),
     listNavPages(toPrismaLocale(locale)),
     getTranslations({locale, namespace: 'site'}),
+    cookies(),
   ]);
+
+  // Applying the stored theme here, in the first byte of HTML, is what makes a
+  // blocking inline script unnecessary: there is no moment at which the page
+  // is painted in the wrong theme. An absent cookie means "follow the OS",
+  // which the CSS media query already handles.
+  const storedTheme = cookieStore.get(THEME_COOKIE_NAME)?.value;
 
   return (
     <html
       lang={locale}
       className={`${spaceGrotesk.variable} ${inter.variable}`}
-      suppressHydrationWarning
+      {...(isExplicitTheme(storedTheme) ? {'data-theme': storedTheme} : {})}
     >
-      <head>
-        <ThemeScript />
-      </head>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <GridBackdrop />

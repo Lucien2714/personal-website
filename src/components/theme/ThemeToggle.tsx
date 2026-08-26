@@ -3,22 +3,26 @@
 import {useSyncExternalStore} from 'react';
 import {useTranslations} from 'next-intl';
 
-import {THEME_STORAGE_KEY} from '@/components/theme/ThemeScript';
+import {
+  THEME_COOKIE_MAX_AGE_SECONDS,
+  THEME_COOKIE_NAME,
+  type ThemePreference,
+  isExplicitTheme,
+} from '@/lib/theme';
 import {cn} from '@/lib/utils/cn';
 
 /**
  * The colour-theme toggle.
  *
- * The stored preference lives in `localStorage`, which is external state, so
- * it is read through `useSyncExternalStore` rather than copied into React
- * state inside an effect. That matters for two reasons: the server render and
- * the first client render agree (both report "system"), and a change made in
- * another tab reaches this one through the `storage` event instead of going
- * unnoticed.
+ * The preference lives in a cookie, which is external state, so it is read
+ * through `useSyncExternalStore` rather than copied into React state inside an
+ * effect. The server has already applied the same cookie to `<html>`, so the
+ * first client render agrees with the markup it is hydrating.
+ *
+ * A click updates two things: the `data-theme` attribute, so the change is
+ * instant, and the cookie, so the *next* page load is server-rendered with it
+ * and never flashes.
  */
-
-/** The three states the toggle cycles through. */
-type ThemePreference = 'system' | 'light' | 'dark';
 
 const ORDER: ThemePreference[] = ['system', 'light', 'dark'];
 
@@ -35,55 +39,46 @@ const listeners = new Set<() => void>();
 /** Registers a subscriber; returns the unsubscribe function. */
 function subscribe(onChange: () => void): () => void {
   listeners.add(onChange);
-  // `storage` fires only in *other* tabs, which is why same-tab changes are
-  // published through the local listener set as well.
-  window.addEventListener('storage', onChange);
-
   return () => {
     listeners.delete(onChange);
-    window.removeEventListener('storage', onChange);
   };
 }
 
-/** Reads the current preference from storage. */
+/** Reads the current preference out of `document.cookie`. */
 function getSnapshot(): ThemePreference {
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    return stored === 'light' || stored === 'dark' ? stored : 'system';
-  } catch {
-    // Private browsing can throw on access; following the system is a fine
-    // answer in that case.
-    return 'system';
-  }
+  const match = new RegExp(`(?:^|;\\s*)${THEME_COOKIE_NAME}=([^;]*)`).exec(
+    document.cookie,
+  );
+
+  const value = match?.[1];
+  return isExplicitTheme(value) ? value : 'system';
 }
 
 /**
  * The value used during server rendering and hydration.
  *
- * It has to be a constant: the server cannot know what a given browser has
- * stored, and returning anything else here would guarantee a mismatch.
+ * The cookie is not readable from the server component tree here, and guessing
+ * would risk a mismatch; the neutral state is the honest answer. The visible
+ * theme does not depend on it - `<html data-theme>` is set by the layout.
  */
 function getServerSnapshot(): ThemePreference {
   return 'system';
 }
 
-/** Writes the preference to `<html>` and to storage, then notifies React. */
+/** Applies a preference to the document and remembers it. */
 function applyPreference(preference: ThemePreference): void {
   const root = document.documentElement;
+
   if (preference === 'system') {
     root.removeAttribute('data-theme');
+    // Expiring the cookie rather than storing "system" keeps one
+    // representation of that state instead of two.
+    document.cookie = `${THEME_COOKIE_NAME}=; Path=/; Max-Age=0; SameSite=Lax`;
   } else {
     root.setAttribute('data-theme', preference);
-  }
-
-  try {
-    if (preference === 'system') {
-      localStorage.removeItem(THEME_STORAGE_KEY);
-    } else {
-      localStorage.setItem(THEME_STORAGE_KEY, preference);
-    }
-  } catch {
-    // The theme still applies to this page view; it just will not persist.
+    document.cookie =
+      `${THEME_COOKIE_NAME}=${preference}; Path=/; ` +
+      `Max-Age=${THEME_COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`;
   }
 
   for (const listener of listeners) {
