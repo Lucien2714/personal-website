@@ -1,7 +1,16 @@
 # Deployment
 
-Deploying to a single VPS with Docker Compose. Three containers: the app,
-PostgreSQL, and Caddy for TLS.
+Deploying to a single VPS with Docker Compose. Four services: a one-shot
+`migrate` job, the app, PostgreSQL, and Caddy for TLS.
+
+> **Running project scripts.** The runtime image contains only the compiled
+> server - no source tree, no `tsx`, no dev dependencies. Anything that runs a
+> script from `scripts/` or `prisma/` therefore goes through the `migrate`
+> service, which is built from the stage that does have them:
+>
+> ```bash
+> docker compose run --rm migrate npx tsx <script>
+> ```
 
 ## Prerequisites
 
@@ -39,11 +48,12 @@ cd docker
 docker compose up -d --build
 ```
 
-The app container applies pending migrations on start (`docker/entrypoint.sh`),
-so there is no separate migration step. Create the admin account once:
+Compose runs a one-shot `migrate` service that applies pending migrations and
+exits; the app waits for it to succeed before starting, so the schema and the
+code that expects it are never a version apart. Create the admin account once:
 
 ```bash
-docker compose exec app npx tsx prisma/seed.ts
+docker compose run --rm migrate npx tsx prisma/seed.ts
 ```
 
 Check it came up:
@@ -76,11 +86,16 @@ cd docker
 docker compose up -d --build
 ```
 
-Migrations run automatically during start-up. Watch the first few seconds:
+The `migrate` service runs first and the app waits for it. Watch both:
 
 ```bash
+docker compose logs migrate
 docker compose logs -f app
 ```
+
+A failed migration leaves the old app container running and the new one
+unstarted, which is the right way round: an unmigrated deploy never serves
+traffic.
 
 ## Backups
 
@@ -144,7 +159,7 @@ docker compose exec postgres psql -U website -d personal_website
 **Reset a forgotten admin password**
 
 ```bash
-docker compose exec -e NEW_PASSWORD='a-long-new-password' app \
+docker compose run --rm -e NEW_PASSWORD='a-long-new-password' migrate \
   npx tsx scripts/set-password.ts --email you@example.com
 ```
 

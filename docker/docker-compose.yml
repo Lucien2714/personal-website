@@ -16,6 +16,27 @@
 name: personal-website
 
 services:
+  # One-shot: applies pending migrations, then exits. The app waits for it to
+  # succeed, so the schema and the code that expects it can never be a version
+  # apart - the failure mode that produces 500s five minutes after a deploy.
+  #
+  # It runs from the builder stage because that is where the complete
+  # dependency tree lives; the runtime image carries only the server bundle.
+  migrate:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: builder
+    command: npx prisma migrate deploy
+    restart: 'no'
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-website}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-personal_website}?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+
   app:
     build:
       context: ..
@@ -35,6 +56,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
       - internal
     healthcheck:
