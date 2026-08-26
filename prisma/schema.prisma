@@ -1,0 +1,372 @@
+// Prisma schema for the personal website.
+//
+// Design notes:
+//   * Content that a reader sees is bilingual. Rather than duplicating whole
+//     rows per language, every translatable entity is split into a language
+//     neutral "trunk" row (ownership, timestamps, ordering, relations) and one
+//     `*Translation` row per locale. Queries therefore filter on `locale`
+//     exactly once, and adding a third language is a data change, not a schema
+//     change.
+//   * Markdown is stored verbatim as the source of truth and rendered to HTML
+//     at write time. Read paths never run the Markdown pipeline, which keeps
+//     page rendering cheap.
+//   * Nothing is hard-deleted from the content tables; a `deletedAt` column
+//     lets the admin UI offer an undo.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// Prisma 7 no longer accepts a connection string here. The URL used by
+// `prisma migrate` lives in prisma.config.ts, and the runtime client receives
+// a driver adapter built in src/lib/db.ts.
+datasource db {
+  provider = "postgresql"
+}
+
+/// Languages the site is published in. Values double as URL segments.
+enum Locale {
+  EN
+  ZH
+}
+
+/// Publication state of a piece of content.
+enum PublishStatus {
+  DRAFT
+  SCHEDULED
+  PUBLISHED
+  ARCHIVED
+}
+
+/// Coarse-grained permission level of an account.
+enum UserRole {
+  /// Full access, including user and API-key management.
+  ADMIN
+  /// May write and publish content but not manage accounts.
+  EDITOR
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+/// A person who can sign in to the admin area.
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  displayName  String
+  /// scrypt hash produced by src/lib/auth/password.ts. Never leaves the server.
+  passwordHash String
+  avatarUrl    String?
+  bio          String?
+  role         UserRole  @default(EDITOR)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions Session[]
+  posts    Post[]
+  moments  Moment[]
+  media    Media[]
+  apiKeys  ApiKey[]
+
+  @@map("users")
+}
+
+/// A server-side record of an issued sign-in token.
+///
+/// Sessions are stateless JWTs, but keeping a row per session makes it
+/// possible to revoke one (or all of them) without waiting for expiry.
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  /// SHA-256 of the token id, so a database leak cannot be replayed.
+  tokenHash String    @unique
+  userAgent String?
+  ipAddress String?
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ---------------------------------------------------------------------------
+// Blog posts
+// ---------------------------------------------------------------------------
+
+/// Language-neutral trunk of a blog post.
+model Post {
+  id          String        @id @default(cuid())
+  authorId    String
+  status      PublishStatus @default(DRAFT)
+  /// When the post becomes publicly visible. Set for SCHEDULED and PUBLISHED.
+  publishedAt DateTime?
+  /// Pinned posts sort above everything else on the index page.
+  pinned      Boolean       @default(false)
+  coverUrl    String?
+  /// Denormalised counter, incremented by a fire-and-forget write on read.
+  viewCount   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  author       User              @relation(fields: [authorId], references: [id])
+  translations PostTranslation[]
+  categories   Category[]        @relation("PostCategories")
+  tags         Tag[]             @relation("PostTags")
+
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@map("posts")
+}
+
+/// One language rendition of a post.
+model PostTranslation {
+  id     String @id @default(cuid())
+  postId String
+  locale Locale
+
+  /// URL segment, unique within a locale.
+  slug String
+  title String
+  /// Short summary used for cards, SEO descriptions and the syndication feed.
+  description String?
+  /// Author-authored Markdown, the source of truth.
+  bodyMarkdown String
+  /// Sanitised HTML rendered from `bodyMarkdown` at save time.
+  bodyHtml String
+  /// Extracted headings, stored as JSON for the table of contents.
+  tableOfContents Json?
+  /// Estimated reading time in minutes, computed at save time.
+  readingMinutes Int @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, locale])
+  @@unique([locale, slug])
+  @@index([postId])
+  @@map("post_translations")
+}
+
+/// A taxonomy bucket. Categories are broad, and a post usually has one or two.
+model Category {
+  id   String @id @default(cuid())
+  slug String @unique
+  /// Display name per locale, keyed by the `Locale` enum value.
+  names Json
+  /// Optional accent colour (hex) used by the category chips.
+  color     String?
+  createdAt DateTime @default(now())
+
+  posts Post[] @relation("PostCategories")
+
+  @@map("categories")
+}
+
+/// A free-form label. Tags are narrow and plentiful.
+model Tag {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  names     Json
+  createdAt DateTime @default(now())
+
+  posts Post[] @relation("PostTags")
+
+  @@map("tags")
+}
+
+// ---------------------------------------------------------------------------
+// Standalone pages (About, Uses, ...)
+// ---------------------------------------------------------------------------
+
+/// A singleton page addressed by slug, for example `/about`.
+model Page {
+  id       String        @id @default(cuid())
+  slug     String        @unique
+  status   PublishStatus @default(PUBLISHED)
+  /// Position in the site navigation, lower sorts first. Null hides the page.
+  navOrder Int?
+  /// Icon name shown next to the navigation entry.
+  icon      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations PageTranslation[]
+
+  @@map("pages")
+}
+
+/// One language rendition of a standalone page.
+model PageTranslation {
+  id           String @id @default(cuid())
+  pageId       String
+  locale       Locale
+  title        String
+  bodyMarkdown String
+  bodyHtml     String
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, locale])
+  @@map("page_translations")
+}
+
+// ---------------------------------------------------------------------------
+// Life stream
+// ---------------------------------------------------------------------------
+
+/// A short, dated note: the microblog half of the site.
+///
+/// Moments are deliberately not translated. They are quick thoughts, and
+/// forcing a second language on them would stop them being quick.
+model Moment {
+  id       String        @id @default(cuid())
+  authorId String
+  status   PublishStatus @default(PUBLISHED)
+  body     String
+  /// Ordered list of image URLs, stored as a JSON array of strings.
+  images   Json          @default("[]")
+  /// Optional emoji or short mood token rendered as a badge.
+  mood      String?
+  location  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([status, createdAt])
+  @@map("moments")
+}
+
+// ---------------------------------------------------------------------------
+// Projects and embeds
+// ---------------------------------------------------------------------------
+
+/// An external project surfaced on the site.
+///
+/// `embedUrl` is what makes second-party development practical: another app of
+/// yours can be rendered inside a card on this site without this codebase
+/// knowing anything about it.
+model Project {
+  id       String        @id @default(cuid())
+  slug     String        @unique
+  status   PublishStatus @default(PUBLISHED)
+  repoUrl  String?
+  liveUrl  String?
+  /// URL rendered inside a sandboxed iframe on the project page.
+  embedUrl String?
+  /// Iframe height in CSS pixels, used when `embedUrl` is set.
+  embedHeight Int?
+  coverUrl    String?
+  /// Technology chips, stored as a JSON array of strings.
+  techStack Json    @default("[]")
+  sortOrder Int     @default(0)
+  featured  Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations ProjectTranslation[]
+
+  @@index([status, sortOrder])
+  @@map("projects")
+}
+
+/// One language rendition of a project entry.
+model ProjectTranslation {
+  id           String  @id @default(cuid())
+  projectId    String
+  locale       Locale
+  name         String
+  summary      String
+  bodyMarkdown String?
+  bodyHtml     String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, locale])
+  @@map("project_translations")
+}
+
+// ---------------------------------------------------------------------------
+// Media library
+// ---------------------------------------------------------------------------
+
+/// An uploaded file. Bytes live on disk (a Docker volume in production); this
+/// row is the index over them.
+model Media {
+  id         String @id @default(cuid())
+  uploaderId String
+  /// Path relative to the upload root, for example `2026/08/cover-a1b2c3.png`.
+  storageKey   String @unique
+  originalName String
+  mimeType     String
+  byteSize     Int
+  width        Int?
+  height       Int?
+  /// Alternative text. Empty string means decorative, null means unset.
+  altText  String?
+  /// SHA-256 of the file contents, used to skip duplicate uploads.
+  checksum  String
+  createdAt DateTime @default(now())
+
+  uploader User @relation(fields: [uploaderId], references: [id])
+
+  @@index([checksum])
+  @@index([createdAt])
+  @@map("media")
+}
+
+// ---------------------------------------------------------------------------
+// Public API access
+// ---------------------------------------------------------------------------
+
+/// A credential handed to one of your other projects so that it can call the
+/// write side of `/api/v1`.
+model ApiKey {
+  id      String @id @default(cuid())
+  ownerId String
+  name    String
+  /// First characters of the key, kept in clear text so that the admin UI can
+  /// show which key a row refers to.
+  prefix String
+  /// SHA-256 of the full key. The key itself is shown exactly once, at
+  /// creation time, and is not recoverable afterwards.
+  keyHash String @unique
+  /// Granted scopes, stored as a JSON array of strings.
+  scopes     Json      @default("[]")
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@map("api_keys")
+}
+
+// ---------------------------------------------------------------------------
+// Site configuration
+// ---------------------------------------------------------------------------
+
+/// A single row of editable site configuration.
+///
+/// Kept as key/value rather than a wide table so that adding a setting does
+/// not require a migration.
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
+}

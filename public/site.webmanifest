@@ -1,0 +1,22 @@
+{
+  "name": "Lucien's Corner",
+  "short_name": "Lucien",
+  "description": "Notes, projects, and everyday moments.",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "theme_color": "#ff5c9d",
+  "background_color": "#fff7fb",
+  "display": "standalone"
+}

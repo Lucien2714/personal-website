@@ -1,0 +1,569 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+/* ---------------------------------------------------------------------------
+ * Theme switching
+ *
+ * The site follows the operating system by default. When a visitor makes an
+ * explicit choice, `data-theme` is stamped on <html> by the inline script in
+ * src/components/theme/ThemeScript.tsx and wins over the media query. Both
+ * paths converge on the same custom properties, so components never branch on
+ * the theme themselves.
+ * ------------------------------------------------------------------------ */
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------------------------------------------------------------------------
+ * Design tokens
+ *
+ * The palette is built around three anime-adjacent accents - sakura pink,
+ * clear-sky blue and lavender - over a warm off-white paper. Dark mode moves
+ * the same hues onto a deep indigo night sky and lifts their lightness so
+ * that contrast ratios stay above 4.5:1 for body text.
+ * ------------------------------------------------------------------------ */
+
+:root {
+  /* Surfaces */
+  --color-canvas: #fff7fb;
+  --color-surface: #ffffff;
+  --color-surface-raised: #fffdfe;
+  --color-surface-sunken: #fdeef6;
+  --color-overlay: rgb(43 36 64 / 0.45);
+
+  /* Text */
+  --color-ink: #2b2440;
+  --color-ink-muted: #6f6785;
+  --color-ink-subtle: #9a93b0;
+  --color-ink-inverse: #fff7fb;
+
+  /* Accents */
+  --color-sakura: #ff5c9d;
+  --color-sakura-soft: #ffd6e7;
+  --color-sky: #3fa9ff;
+  --color-sky-soft: #d3ecff;
+  --color-lavender: #8b6cf0;
+  --color-lavender-soft: #e4dbff;
+  --color-mint: #2fc4a6;
+
+  /* Lines */
+  --color-border: #f4dde9;
+  --color-border-strong: #e8c3d8;
+
+  /* Feedback */
+  --color-danger: #e5484d;
+  --color-warning: #d97706;
+  --color-success: #12a594;
+
+  /* Effects */
+  --shadow-soft:
+    0 1px 2px rgb(43 36 64 / 0.04), 0 8px 24px rgb(255 92 157 / 0.08);
+  --shadow-lifted:
+    0 2px 4px rgb(43 36 64 / 0.06), 0 16px 40px rgb(255 92 157 / 0.14);
+  --shadow-glow: 0 0 0 3px rgb(255 92 157 / 0.18);
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-canvas: #100e1c;
+    --color-surface: #191630;
+    --color-surface-raised: #211d3d;
+    --color-surface-sunken: #141224;
+    --color-overlay: rgb(6 4 16 / 0.65);
+
+    --color-ink: #ece8fb;
+    --color-ink-muted: #a9a2c8;
+    --color-ink-subtle: #7c749b;
+    --color-ink-inverse: #191630;
+
+    --color-sakura: #ff8fc0;
+    --color-sakura-soft: #4a2340;
+    --color-sky: #7cccff;
+    --color-sky-soft: #17324b;
+    --color-lavender: #b09bff;
+    --color-lavender-soft: #2e2657;
+    --color-mint: #55e0c2;
+
+    --color-border: #2c2750;
+    --color-border-strong: #3d366b;
+
+    --color-danger: #ff6369;
+    --color-warning: #f5a524;
+    --color-success: #3dd8c0;
+
+    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+    --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
+    --shadow-glow: 0 0 0 3px rgb(255 143 192 / 0.25);
+
+    color-scheme: dark;
+  }
+}
+
+[data-theme='dark'] {
+  --color-canvas: #100e1c;
+  --color-surface: #191630;
+  --color-surface-raised: #211d3d;
+  --color-surface-sunken: #141224;
+  --color-overlay: rgb(6 4 16 / 0.65);
+
+  --color-ink: #ece8fb;
+  --color-ink-muted: #a9a2c8;
+  --color-ink-subtle: #7c749b;
+  --color-ink-inverse: #191630;
+
+  --color-sakura: #ff8fc0;
+  --color-sakura-soft: #4a2340;
+  --color-sky: #7cccff;
+  --color-sky-soft: #17324b;
+  --color-lavender: #b09bff;
+  --color-lavender-soft: #2e2657;
+  --color-mint: #55e0c2;
+
+  --color-border: #2c2750;
+  --color-border-strong: #3d366b;
+
+  --color-danger: #ff6369;
+  --color-warning: #f5a524;
+  --color-success: #3dd8c0;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-lifted: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 40px rgb(0 0 0 / 0.45);
+  --shadow-glow: 0 0 0 3px rgb(255 143 192 / 0.25);
+
+  color-scheme: dark;
+}
+
+/* Expose the tokens to Tailwind's utility generator, so that `bg-surface`,
+ * `text-ink-muted` and friends exist as ordinary classes. */
+@theme inline {
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-sunken: var(--color-surface-sunken);
+  --color-overlay: var(--color-overlay);
+
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-ink-subtle: var(--color-ink-subtle);
+  --color-ink-inverse: var(--color-ink-inverse);
+
+  --color-sakura: var(--color-sakura);
+  --color-sakura-soft: var(--color-sakura-soft);
+  --color-sky: var(--color-sky);
+  --color-sky-soft: var(--color-sky-soft);
+  --color-lavender: var(--color-lavender);
+  --color-lavender-soft: var(--color-lavender-soft);
+  --color-mint: var(--color-mint);
+
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-success: var(--color-success);
+
+  --font-display:
+    var(--font-quicksand), ui-rounded, 'Hiragino Maru Gothic ProN', 'Segoe UI',
+    system-ui, sans-serif;
+  --font-sans:
+    var(--font-inter), system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --radius-card: 1.25rem;
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lifted: var(--shadow-lifted);
+}
+
+/* ---------------------------------------------------------------------------
+ * Base layer
+ * ------------------------------------------------------------------------ */
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Anchored headings would otherwise hide under the sticky header. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sakura);
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
+
+  ::selection {
+    background-color: var(--color-sakura-soft);
+    color: var(--color-ink);
+  }
+
+  /* Respect a visitor who has asked the system to stop animating things. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Components
+ * ------------------------------------------------------------------------ */
+
+@layer components {
+  /* The soft card that most content sits on. */
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform 200ms ease,
+      box-shadow 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lifted);
+    border-color: var(--color-border-strong);
+  }
+
+  /* Small rounded label used for tags, categories and statuses. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.7rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.6;
+    background-color: var(--color-sakura-soft);
+    color: var(--color-sakura);
+    border: 1px solid transparent;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  /* Gradient wash used behind hero sections and the site header. */
+  .aurora {
+    background-image:
+      radial-gradient(
+        60rem 30rem at 10% -10%,
+        rgb(255 92 157 / 0.16),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 26rem at 90% 0%,
+        rgb(63 169 255 / 0.14),
+        transparent 60%
+      ),
+      radial-gradient(
+        40rem 24rem at 50% 20%,
+        rgb(139 108 240 / 0.12),
+        transparent 65%
+      );
+  }
+
+  /* Underline that sweeps in on hover, used by the navigation links. */
+  .link-sweep {
+    position: relative;
+  }
+
+  .link-sweep::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.2rem;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--color-sakura),
+      var(--color-lavender)
+    );
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 220ms ease;
+  }
+
+  .link-sweep:hover::after,
+  .link-sweep[data-active='true']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Rendered Markdown
+ *
+ * Styling lives here rather than in a typography plugin because the HTML is
+ * produced by our own pipeline (src/lib/content/markdown.ts) and its shape is
+ * therefore known and stable.
+ * ------------------------------------------------------------------------ */
+
+.prose-anime {
+  color: var(--color-ink);
+  font-size: 1.02rem;
+  line-height: 1.85;
+  word-wrap: break-word;
+}
+
+.prose-anime > * + * {
+  margin-top: 1.15em;
+}
+
+.prose-anime h2,
+.prose-anime h3,
+.prose-anime h4 {
+  margin-top: 2.2em;
+  margin-bottom: 0.7em;
+  scroll-margin-top: 6rem;
+}
+
+.prose-anime h2 {
+  font-size: 1.6rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px dashed var(--color-border);
+}
+
+.prose-anime h3 {
+  font-size: 1.28rem;
+}
+
+.prose-anime h4 {
+  font-size: 1.1rem;
+}
+
+/* rehype-autolink-headings wraps the heading text in an anchor; keep it
+ * looking like a heading until the reader hovers it. */
+.prose-anime .heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.prose-anime .heading-anchor:hover {
+  color: var(--color-sakura);
+}
+
+.prose-anime a:not(.heading-anchor) {
+  color: var(--color-sakura);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  transition: color 160ms ease;
+}
+
+.prose-anime a:not(.heading-anchor):hover {
+  color: var(--color-lavender);
+}
+
+.prose-anime ul,
+.prose-anime ol {
+  padding-inline-start: 1.4rem;
+}
+
+.prose-anime ul {
+  list-style: disc;
+}
+
+.prose-anime ol {
+  list-style: decimal;
+}
+
+.prose-anime li + li {
+  margin-top: 0.4em;
+}
+
+.prose-anime li::marker {
+  color: var(--color-sakura);
+}
+
+.prose-anime blockquote {
+  margin-inline: 0;
+  padding: 0.9rem 1.2rem;
+  border-inline-start: 4px solid var(--color-lavender);
+  border-radius: 0 0.75rem 0.75rem 0;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+}
+
+.prose-anime blockquote > :first-child {
+  margin-top: 0;
+}
+
+.prose-anime img {
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-anime hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border-strong),
+    transparent
+  );
+}
+
+/* Inline code. Fenced blocks are handled by Shiki below. */
+.prose-anime :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.15em 0.4em;
+  border-radius: 0.4rem;
+  background-color: var(--color-sakura-soft);
+  color: var(--color-sakura);
+}
+
+.prose-anime pre {
+  padding: 1.1rem 1.2rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--color-border);
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.prose-anime pre code {
+  font-family: var(--font-mono);
+}
+
+/* Shiki emits both themes; swap which one is visible with the site theme. */
+html[data-theme='dark'] .shiki,
+html[data-theme='dark'] .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .shiki,
+  html:not([data-theme='light']) .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+.prose-anime table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.prose-anime th,
+.prose-anime td {
+  border: 1px solid var(--color-border);
+  padding: 0.55rem 0.8rem;
+  text-align: start;
+}
+
+.prose-anime th {
+  background-color: var(--color-surface-sunken);
+  font-weight: 600;
+}
+
+.prose-anime .footnotes {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--color-border);
+  font-size: 0.92rem;
+  color: var(--color-ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
+ * Decorative motion
+ *
+ * Slow, low-amplitude drifts. Anything faster reads as a distraction on a
+ * page whose job is to be read.
+ * ------------------------------------------------------------------------ */
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(3deg);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 9s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 3.5s ease-in-out infinite;
+}
+
+/* A thin scrollbar that matches the palette instead of the OS default. */
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--color-canvas);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-sakura);
+  }
+}

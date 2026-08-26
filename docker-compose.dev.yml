@@ -1,0 +1,32 @@
+# Local development dependencies.
+#
+# Only the database runs in Docker during development; the Next.js dev server
+# runs on the host so that hot reload stays fast.
+#
+#   docker compose -f docker-compose.dev.yml up -d
+#   npm run db:migrate
+#   npm run dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: personal-website-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: website
+      POSTGRES_PASSWORD: website
+      POSTGRES_DB: personal_website
+      # Deterministic collation keeps ORDER BY results identical across hosts.
+      POSTGRES_INITDB_ARGS: '--locale-provider=icu --icu-locale=und --encoding=UTF8'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U website -d personal_website']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-dev-data:

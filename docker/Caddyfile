@@ -1,0 +1,43 @@
+# Reverse proxy and TLS termination.
+#
+# Caddy obtains and renews a Let's Encrypt certificate for SITE_DOMAIN on its
+# own, provided the domain's A/AAAA records point at this host and ports 80 and
+# 443 are reachable.
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	# Uploaded media is immutable: the filename carries a content hash, so a
+	# changed file is a different URL and this can be cached indefinitely.
+	@uploads path /uploads/*
+	header @uploads Cache-Control "public, max-age=31536000, immutable"
+
+	# Next.js build assets are likewise content-hashed.
+	@static path /_next/static/*
+	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Caddy announces itself by default; there is no reason to tell the
+		# internet which server version is running.
+		-Server
+	}
+
+	reverse_proxy app:3000 {
+		# The application reads the client address from this header for rate
+		# limiting. Caddy sets it from the real connection, overwriting
+		# anything the client sent, which is what makes it trustworthy.
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}

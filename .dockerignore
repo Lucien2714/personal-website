@@ -1,0 +1,24 @@
+# Keep the build context small and free of anything that would leak into the
+# image or invalidate its cache unnecessarily.
+node_modules
+.next
+.git
+.github
+coverage
+docs
+tests
+
+.env
+.env.*
+!.env.example
+
+*.log
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+
+# Uploaded media belongs on the volume, not in the image.
+public/uploads/*
+!public/uploads/.gitkeep
+
+docker/backups

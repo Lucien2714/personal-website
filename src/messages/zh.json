@@ -1,0 +1,192 @@
+{
+  "site": {
+    "title": "Lucien 的小站",
+    "tagline": "笔记、项目，以及日常",
+    "description": "Lucien 的个人网站：记录 AI 与机器学习的学习笔记、个人项目，以及日常生活。"
+  },
+  "nav": {
+    "home": "首页",
+    "posts": "文章",
+    "moments": "动态",
+    "projects": "项目",
+    "archives": "归档",
+    "about": "关于",
+    "admin": "后台",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "switchLanguage": "语言",
+    "toggleTheme": "切换主题"
+  },
+  "home": {
+    "greeting": "欢迎来到这里",
+    "intro": "我用机器学习做点东西，打太多 Apex，然后把这些都写下来。",
+    "latestPosts": "最新文章",
+    "latestMoments": "最近动态",
+    "featuredProjects": "精选项目",
+    "viewAll": "查看全部",
+    "empty": "这里还什么都没有，过阵子再来看看。"
+  },
+  "post": {
+    "readingTime": "约 {minutes} 分钟",
+    "publishedOn": "发布于 {date}",
+    "updatedOn": "更新于 {date}",
+    "views": "{count, plural, =0 {暂无阅读} other {# 次阅读}}",
+    "tableOfContents": "本页目录",
+    "categories": "分类",
+    "tags": "标签",
+    "previous": "上一篇",
+    "next": "下一篇",
+    "pinned": "置顶",
+    "draft": "草稿",
+    "notAvailableInLocale": "这篇文章还没有中文版，以下是原文。",
+    "backToPosts": "全部文章"
+  },
+  "posts": {
+    "title": "文章",
+    "subtitle": "关于项目、工程，以及其他留下印象的东西。",
+    "empty": "还没有文章。",
+    "filteredByCategory": "分类：{name}",
+    "filteredByTag": "标签：{name}",
+    "clearFilter": "清除筛选",
+    "page": "第 {current} / {total} 页",
+    "newer": "更新的",
+    "older": "更早的"
+  },
+  "moments": {
+    "title": "动态",
+    "subtitle": "日常里的碎碎念。",
+    "empty": "还没有动态。",
+    "postedAt": "{date}"
+  },
+  "projects": {
+    "title": "项目",
+    "subtitle": "做完的，和还在做的。",
+    "empty": "还没有项目。",
+    "sourceCode": "源码",
+    "liveDemo": "在线体验",
+    "featured": "精选",
+    "embedTitle": "{name} 实时预览",
+    "embedFallback": "预览加载失败，可以在新标签页中打开。"
+  },
+  "archives": {
+    "title": "归档",
+    "subtitle": "按时间排列的全部内容。",
+    "postCount": "{count, plural, other {# 篇}}",
+    "empty": "还没有可归档的内容。"
+  },
+  "categories": {
+    "title": "分类",
+    "empty": "还没有分类。"
+  },
+  "tags": {
+    "title": "标签",
+    "empty": "还没有标签。"
+  },
+  "search": {
+    "placeholder": "搜索文章…",
+    "label": "搜索",
+    "noResults": "没有找到与“{query}”相关的内容。",
+    "resultCount": "{count, plural, other {# 条结果}}"
+  },
+  "footer": {
+    "builtWith": "由 Next.js 驱动",
+    "sourceCode": "源码",
+    "rights": "© {year} Lucien Chen",
+    "feed": "订阅",
+    "api": "接口"
+  },
+  "error": {
+    "notFoundTitle": "页面不存在",
+    "notFoundBody": "没有找到这个页面，它可能已经被移动了。",
+    "genericTitle": "出了点问题",
+    "genericBody": "发生了意料之外的错误，重试一次通常就好了。",
+    "retry": "重试",
+    "goHome": "回到首页"
+  },
+  "auth": {
+    "signInTitle": "登录",
+    "signInSubtitle": "站点管理入口。",
+    "email": "邮箱",
+    "password": "密码",
+    "submit": "登录",
+    "submitting": "登录中…",
+    "signOut": "退出登录",
+    "invalidCredentials": "邮箱或密码不正确。",
+    "rateLimited": "尝试次数过多，请稍后再试。"
+  },
+  "admin": {
+    "title": "后台",
+    "dashboard": "概览",
+    "posts": "文章",
+    "moments": "动态",
+    "projects": "项目",
+    "pages": "页面",
+    "media": "媒体",
+    "apiKeys": "API 密钥",
+    "settings": "设置",
+    "backToSite": "查看站点",
+    "newPost": "写文章",
+    "newMoment": "发动态",
+    "newProject": "新建项目",
+    "save": "保存",
+    "saving": "保存中…",
+    "saved": "已保存",
+    "publish": "发布",
+    "unpublish": "转为草稿",
+    "delete": "删除",
+    "confirmDelete": "确定要永久删除吗？",
+    "cancel": "取消",
+    "edit": "编辑",
+    "preview": "预览",
+    "status": "状态",
+    "statusDraft": "草稿",
+    "statusScheduled": "定时发布",
+    "statusPublished": "已发布",
+    "statusArchived": "已归档",
+    "titleField": "标题",
+    "slugField": "链接名",
+    "descriptionField": "摘要",
+    "bodyField": "正文（Markdown）",
+    "coverField": "封面图",
+    "categoriesField": "分类",
+    "tagsField": "标签",
+    "publishedAtField": "发布时间",
+    "pinnedField": "置顶",
+    "localeTab": "{locale} 版本",
+    "uploadImage": "上传图片",
+    "dropToUpload": "把图片拖到这里，或点击选择",
+    "copyUrl": "复制链接",
+    "copied": "已复制",
+    "stats": {
+      "posts": "文章",
+      "moments": "动态",
+      "projects": "项目",
+      "drafts": "草稿",
+      "media": "媒体文件",
+      "views": "总阅读量"
+    },
+    "apiKey": {
+      "name": "密钥名称",
+      "scopes": "权限范围",
+      "create": "创建密钥",
+      "created": "密钥已创建，请立即复制，之后不会再次显示。",
+      "revoke": "吊销",
+      "revoked": "已吊销",
+      "lastUsed": "最近使用于 {date}",
+      "neverUsed": "从未使用",
+      "expires": "有效期至 {date}",
+      "neverExpires": "永不过期",
+      "expiry": "有效期",
+      "expired": "已过期",
+      "lastUsedLabel": "最近使用"
+    },
+    "empty": "这里还什么都没有。"
+  },
+  "common": {
+    "loading": "加载中…",
+    "close": "关闭",
+    "readMore": "阅读全文",
+    "optional": "可选",
+    "required": "必填"
+  }
+}

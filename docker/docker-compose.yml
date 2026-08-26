@@ -1,0 +1,104 @@
+# Production stack for a single VPS.
+#
+#   cd docker
+#   cp ../.env.example ../.env   # then fill in real values
+#   docker compose up -d --build
+#
+# Three services: the app, Postgres, and Caddy as the TLS-terminating reverse
+# proxy. Caddy is included because obtaining and renewing a certificate is
+# otherwise the one manual step that gets forgotten; it does it automatically
+# from the domain name in Caddyfile.
+#
+# Only Caddy publishes ports. Postgres and the app are reachable on the
+# internal network alone, so neither is exposed to the internet even if the
+# host firewall is misconfigured.
+
+name: personal-website
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: personal-website:latest
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: production
+      # Overrides whatever .env says: inside the network the database is
+      # reachable by service name, not on localhost.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-website}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-personal_website}?schema=public
+      UPLOAD_DIR: /app/public/uploads
+    volumes:
+      - uploads:/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - internal
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/v1').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-website}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-personal_website}
+      POSTGRES_INITDB_ARGS: '--locale-provider=icu --icu-locale=und --encoding=UTF8'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Nightly dumps land here; see docs/deployment.md for the cron entry.
+      - ./backups:/backups
+    networks:
+      - internal
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-website} -d ${POSTGRES_DB:-personal_website}',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      # Set SITE_DOMAIN in .env, e.g. lucien2714.com
+      SITE_DOMAIN: ${SITE_DOMAIN:?set SITE_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  uploads:
+  caddy-data:
+  caddy-config:

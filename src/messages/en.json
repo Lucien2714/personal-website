@@ -1,0 +1,192 @@
+{
+  "site": {
+    "title": "Lucien's Corner",
+    "tagline": "Notes, projects, and everyday moments",
+    "description": "A personal site where Lucien writes about AI and machine learning, ships side projects, and keeps a record of daily life."
+  },
+  "nav": {
+    "home": "Home",
+    "posts": "Posts",
+    "moments": "Moments",
+    "projects": "Projects",
+    "archives": "Archives",
+    "about": "About",
+    "admin": "Console",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchLanguage": "Language",
+    "toggleTheme": "Toggle theme"
+  },
+  "home": {
+    "greeting": "Welcome aboard",
+    "intro": "I build things with machine learning, play too much Apex, and write it all down here.",
+    "latestPosts": "Latest posts",
+    "latestMoments": "Recent moments",
+    "featuredProjects": "Featured projects",
+    "viewAll": "View all",
+    "empty": "Nothing here yet. Check back soon."
+  },
+  "post": {
+    "readingTime": "{minutes} min read",
+    "publishedOn": "Published {date}",
+    "updatedOn": "Updated {date}",
+    "views": "{count, plural, =0 {No views} one {# view} other {# views}}",
+    "tableOfContents": "On this page",
+    "categories": "Categories",
+    "tags": "Tags",
+    "previous": "Previous",
+    "next": "Next",
+    "pinned": "Pinned",
+    "draft": "Draft",
+    "notAvailableInLocale": "This post has not been translated yet. Showing the original.",
+    "backToPosts": "All posts"
+  },
+  "posts": {
+    "title": "Posts",
+    "subtitle": "Long-form writing on projects, engineering and whatever else stuck.",
+    "empty": "No posts yet.",
+    "filteredByCategory": "Category: {name}",
+    "filteredByTag": "Tag: {name}",
+    "clearFilter": "Clear filter",
+    "page": "Page {current} of {total}",
+    "newer": "Newer",
+    "older": "Older"
+  },
+  "moments": {
+    "title": "Moments",
+    "subtitle": "Short notes from day to day.",
+    "empty": "No moments yet.",
+    "postedAt": "{date}"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Things I have built, and things still being built.",
+    "empty": "No projects yet.",
+    "sourceCode": "Source",
+    "liveDemo": "Live",
+    "featured": "Featured",
+    "embedTitle": "{name} live preview",
+    "embedFallback": "This preview could not be loaded. Open it in a new tab instead."
+  },
+  "archives": {
+    "title": "Archives",
+    "subtitle": "Everything, by date.",
+    "postCount": "{count, plural, one {# post} other {# posts}}",
+    "empty": "Nothing archived yet."
+  },
+  "categories": {
+    "title": "Categories",
+    "empty": "No categories yet."
+  },
+  "tags": {
+    "title": "Tags",
+    "empty": "No tags yet."
+  },
+  "search": {
+    "placeholder": "Search posts…",
+    "label": "Search",
+    "noResults": "Nothing matched \"{query}\".",
+    "resultCount": "{count, plural, one {# result} other {# results}}"
+  },
+  "footer": {
+    "builtWith": "Built with Next.js",
+    "sourceCode": "Source code",
+    "rights": "© {year} Lucien Chen",
+    "feed": "RSS",
+    "api": "API"
+  },
+  "error": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you were looking for is not here. It may have moved.",
+    "genericTitle": "Something went wrong",
+    "genericBody": "An unexpected error occurred. Trying again often helps.",
+    "retry": "Try again",
+    "goHome": "Back home"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signInSubtitle": "Console access for the site owner.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "signOut": "Sign out",
+    "invalidCredentials": "That email and password combination did not work.",
+    "rateLimited": "Too many attempts. Wait a minute and try again."
+  },
+  "admin": {
+    "title": "Console",
+    "dashboard": "Dashboard",
+    "posts": "Posts",
+    "moments": "Moments",
+    "projects": "Projects",
+    "pages": "Pages",
+    "media": "Media",
+    "apiKeys": "API keys",
+    "settings": "Settings",
+    "backToSite": "View site",
+    "newPost": "New post",
+    "newMoment": "New moment",
+    "newProject": "New project",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "publish": "Publish",
+    "unpublish": "Move to draft",
+    "delete": "Delete",
+    "confirmDelete": "Delete this permanently?",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "preview": "Preview",
+    "status": "Status",
+    "statusDraft": "Draft",
+    "statusScheduled": "Scheduled",
+    "statusPublished": "Published",
+    "statusArchived": "Archived",
+    "titleField": "Title",
+    "slugField": "Slug",
+    "descriptionField": "Description",
+    "bodyField": "Body (Markdown)",
+    "coverField": "Cover image",
+    "categoriesField": "Categories",
+    "tagsField": "Tags",
+    "publishedAtField": "Publish at",
+    "pinnedField": "Pin to top",
+    "localeTab": "{locale} version",
+    "uploadImage": "Upload image",
+    "dropToUpload": "Drop an image here, or click to choose one",
+    "copyUrl": "Copy URL",
+    "copied": "Copied",
+    "stats": {
+      "posts": "Posts",
+      "moments": "Moments",
+      "projects": "Projects",
+      "drafts": "Drafts",
+      "media": "Media files",
+      "views": "Total views"
+    },
+    "apiKey": {
+      "name": "Key name",
+      "scopes": "Scopes",
+      "create": "Create key",
+      "created": "Key created. Copy it now, it will not be shown again.",
+      "revoke": "Revoke",
+      "revoked": "Revoked",
+      "lastUsed": "Last used {date}",
+      "neverUsed": "Never used",
+      "expires": "Expires {date}",
+      "neverExpires": "No expiry",
+      "expiry": "Expiry",
+      "expired": "Expired",
+      "lastUsedLabel": "Last used"
+    },
+    "empty": "Nothing here yet."
+  },
+  "common": {
+    "loading": "Loading…",
+    "close": "Close",
+    "readMore": "Read more",
+    "optional": "optional",
+    "required": "required"
+  }
+}
