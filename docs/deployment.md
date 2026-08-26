@@ -45,7 +45,13 @@ source moves a few megabytes.
 
 - A VPS with Docker and the Compose plugin (`docker compose version` must
   print v2.x — Ubuntu's `docker.io` package does not include it).
-- A domain whose A (and AAAA) records point at the host.
+- A domain with an **A** record pointing at the host's IPv4 address.
+
+  Add an `AAAA` record only once IPv6 actually reaches the container. Let's
+  Encrypt prefers IPv6 whenever an AAAA record exists, and the ports published
+  below bind IPv4 only unless the Docker daemon has IPv6 and `ip6tables`
+  enabled — so a premature AAAA record means certificate issuance fails with a
+  connection timeout that says nothing about the cause.
 - Ports 80 and 443 reachable — Caddy needs both to obtain a certificate.
 - The GHCR package set to public, or a pull token on the server (see below).
 
