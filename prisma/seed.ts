@@ -28,14 +28,37 @@ function requireEnv(name: string): string {
   return value;
 }
 
-/** Creates the administrator account if it does not exist yet. */
+/**
+ * Ensures the administrator account exists and can reach the console.
+ *
+ * The password of an existing account is never touched — a later seed run must
+ * not undo a deliberate change. The *role* is, because the seed's whole
+ * purpose is that there is an administrator afterwards, and an account at this
+ * address holding any other role means there is not. That state is reachable:
+ * the default role for new accounts is READER, so anything that creates the
+ * owner's row by another route — an OAuth sign-in matching the same verified
+ * address, for instance — leaves it unable to sign in to the console.
+ */
 async function seedAdmin(): Promise<string> {
   const email = requireEnv('SEED_ADMIN_EMAIL').toLowerCase();
   const displayName = process.env.SEED_ADMIN_NAME ?? 'Site Owner';
 
   const existing = await db.user.findUnique({where: {email}});
   if (existing) {
-    console.log(`  admin ${email} already exists, leaving password untouched`);
+    if (existing.role === 'ADMIN') {
+      console.log(
+        `  admin ${email} already exists, leaving password untouched`,
+      );
+    } else {
+      await db.user.update({
+        where: {id: existing.id},
+        data: {role: 'ADMIN', blockedAt: null},
+      });
+      console.log(
+        `  ${email} existed with role ${existing.role}; promoted to ADMIN`,
+      );
+    }
+
     return existing.id;
   }
 

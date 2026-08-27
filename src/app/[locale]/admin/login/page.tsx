@@ -5,6 +5,7 @@ import {getTranslations, setRequestLocale} from 'next-intl/server';
 import {LoginForm} from '@/app/[locale]/admin/login/LoginForm';
 import {Container} from '@/components/ui/primitives';
 import type {AppLocale} from '@/i18n/routing';
+import {isStaffRole} from '@/lib/auth/guard';
 import {getSessionUser} from '@/lib/auth/session';
 
 /** The console sign-in page. */
@@ -29,8 +30,13 @@ export default async function LoginPage({
   setRequestLocale(locale);
 
   // Someone who is already signed in has no business on the login page.
+  // Only a *staff* session is a reason to leave: the console guard admits
+  // nothing less, so redirecting a signed-in reader here would bounce them
+  // straight back and loop forever. A reader who lands on this page is shown
+  // the form instead — signing in as staff replaces their session, which is
+  // exactly what someone reaching the console login intends.
   const user = await getSessionUser();
-  if (user) {
+  if (user && isStaffRole(user.role)) {
     redirect(`/${locale}/admin`);
   }
 
