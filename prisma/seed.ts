@@ -28,16 +28,34 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Reads and validates SEED_ADMIN_PASSWORD. */
+function requireSeedPassword(): string {
+  const password = requireEnv('SEED_ADMIN_PASSWORD');
+
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(
+      `SEED_ADMIN_PASSWORD must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+    );
+  }
+
+  return password;
+}
+
 /**
  * Ensures the administrator account exists and can reach the console.
  *
- * The password of an existing account is never touched — a later seed run must
- * not undo a deliberate change. The *role* is, because the seed's whole
- * purpose is that there is an administrator afterwards, and an account at this
- * address holding any other role means there is not. That state is reachable:
- * the default role for new accounts is READER, so anything that creates the
- * owner's row by another route — an OAuth sign-in matching the same verified
- * address, for instance — leaves it unable to sign in to the console.
+ * An existing password is never overwritten — a later seed run must not undo a
+ * deliberate change. Two other things are repaired, because leaving them alone
+ * would mean the seed had not done its job:
+ *
+ *   - **The role.** An account at this address holding anything but ADMIN
+ *     means there is no administrator afterwards. Reachable in practice: new
+ *     accounts default to READER, so if the owner signs in through OAuth
+ *     before the seed has ever run, their own row is created as a reader.
+ *   - **A missing password.** The same route leaves `passwordHash` null, since
+ *     OAuth accounts have none. There is nothing to preserve in that case, and
+ *     without it the console's password login — the way in that does not
+ *     depend on a third party being reachable — does not exist.
  */
 async function seedAdmin(): Promise<string> {
   const email = requireEnv('SEED_ADMIN_EMAIL').toLowerCase();
@@ -45,29 +63,36 @@ async function seedAdmin(): Promise<string> {
 
   const existing = await db.user.findUnique({where: {email}});
   if (existing) {
-    if (existing.role === 'ADMIN') {
-      console.log(
-        `  admin ${email} already exists, leaving password untouched`,
-      );
-    } else {
-      await db.user.update({
-        where: {id: existing.id},
-        data: {role: 'ADMIN', blockedAt: null},
-      });
-      console.log(
-        `  ${email} existed with role ${existing.role}; promoted to ADMIN`,
-      );
+    const repairs: string[] = [];
+
+    if (existing.role !== 'ADMIN') {
+      repairs.push(`promoted from ${existing.role} to ADMIN`);
     }
+    if (!existing.passwordHash) {
+      repairs.push('set a password, which the account had none of');
+    }
+
+    await db.user.update({
+      where: {id: existing.id},
+      data: {
+        role: 'ADMIN',
+        blockedAt: null,
+        ...(existing.passwordHash
+          ? {}
+          : {passwordHash: await hashPassword(requireSeedPassword())}),
+      },
+    });
+
+    console.log(
+      repairs.length === 0
+        ? `  admin ${email} already exists, left untouched`
+        : `  ${email}: ${repairs.join('; ')}`,
+    );
 
     return existing.id;
   }
 
-  const password = requireEnv('SEED_ADMIN_PASSWORD');
-  if (password.length < MIN_PASSWORD_LENGTH) {
-    throw new Error(
-      `SEED_ADMIN_PASSWORD must be at least ${MIN_PASSWORD_LENGTH} characters.`,
-    );
-  }
+  const password = requireSeedPassword();
 
   const created = await db.user.create({
     data: {
