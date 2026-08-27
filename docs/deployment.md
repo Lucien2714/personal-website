@@ -260,16 +260,33 @@ docker compose exec app sh
 docker compose exec postgres psql -U website -d personal_website
 ```
 
-**Reset a forgotten admin password**
+**Change or reset the admin password**
 
 ```bash
-docker compose run --rm -e NEW_PASSWORD='a-long-new-password' migrate \
+docker compose run --rm migrate \
   npx tsx scripts/set-password.ts --email you@example.com
 ```
 
-Passing it through the environment rather than as `--password` keeps the value
-out of `ps` output and shell history. The script also revokes every active
-session for that account, so a reset actually locks out whoever had one.
+With no password on the command line it prompts for one twice, without echoing
+it. That is the form to use: the password then exists only in the process that
+sets it.
+
+Both other routes leave the password behind. `--password '...'` is visible to
+anyone who can run `ps` while the command runs, and an inline
+`-e NEW_PASSWORD='...'` is an argument to `docker compose`, so it is recorded
+in shell history just the same — an earlier version of this page claimed
+otherwise and was wrong. For automation, export the variable first and pass it
+through by name, so the value is never an argument:
+
+```bash
+read -rs NEW_PASSWORD && export NEW_PASSWORD
+docker compose run --rm -e NEW_PASSWORD migrate \
+  npx tsx scripts/set-password.ts --email you@example.com
+unset NEW_PASSWORD
+```
+
+Minimum twelve characters. The script also revokes every active session for
+that account, so a reset actually locks out whoever had one.
 
 ## Changing the domain
 
