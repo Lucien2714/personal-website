@@ -60,22 +60,31 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Placeholder, declared as ARG rather than ENV so that it exists only while
+# this stage runs. `prisma generate` reads schema.prisma, not the database, so
+# the value is never connected to.
+ARG DATABASE_URL="postgresql://build:build@localhost:5432/build?schema=public"
+
+# The Prisma client is generated into src/generated, which is git-ignored: it
+# is a build artefact, not source. So it must be produced here rather than
+# arriving with the source tree, or anything importing `@/generated/...` -
+# every script in scripts/ and prisma/ - fails to resolve it at run time.
+RUN DATABASE_URL="$DATABASE_URL" npx prisma generate
+
 # ---------------------------------------------------------------------------
 # Build
 # ---------------------------------------------------------------------------
 FROM tools AS builder
 
 # The build imports src/lib/env.ts, which refuses to start without these.
-# They are placeholders, declared as ARG rather than ENV so that they exist
-# only while this stage runs: nothing reads the database at build time, and the
-# real values arrive at run time.
 ARG DATABASE_URL="postgresql://build:build@localhost:5432/build?schema=public"
 # A fixed literal that only exists to satisfy the length check in env.ts.
 ARG BUILD_AUTH_PLACEHOLDER="placeholder-value-used-only-to-satisfy-env-validation"
 
+# `npm run build` regenerates the client before compiling. That is redundant
+# with the stage above and left alone deliberately: the script stays correct
+# when run on its own, and a second generate costs well under a second.
 RUN DATABASE_URL="$DATABASE_URL" AUTH_SECRET="$BUILD_AUTH_PLACEHOLDER" \
-  npx prisma generate && \
-  DATABASE_URL="$DATABASE_URL" AUTH_SECRET="$BUILD_AUTH_PLACEHOLDER" \
   npm run build
 
 # ---------------------------------------------------------------------------
